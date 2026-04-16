@@ -1,0 +1,7040 @@
+openapi: 3.0.1
+info:
+  title: AuthorisationInitiation
+  description: Acquirer to Issuer Card Messages Online AuthorisationInitiation and
+    Response based on cain.001.001.03 and cain.002.001.03
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.example.com/v1
+paths:
+  /AuthorisationInitiation:
+    post:
+      tags:
+      - Acquirer to Issuer Card Messages
+      description: Create AuthorisationInitiation
+      operationId: Create AuthorisationInitiation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APIRequest'
+        required: false
+      responses:
+        '200':
+          description: API request processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - OauthSecurity:
+        - api.example.AuthorisationInitiation.Acquirer to Issuer Card Messages
+components:
+  schemas:
+    APIRequest:
+      required:
+      - AuthstnInitn
+      type: object
+      properties:
+        AuthstnInitn:
+          $ref: '#/components/schemas/AuthorisationInitiationV03'
+    APIResponse:
+      required:
+      - AuthstnRspn
+      type: object
+      properties:
+        AuthstnRspn:
+          $ref: '#/components/schemas/AuthorisationResponseV03'
+    CorrelationId:
+      maxLength: 36
+      type: string
+      description: Unique identifier that can be used to co-relate request and responses
+      format: uuid
+    ErrorCode:
+      type: string
+      description: 'The code indicating the type of error.  Possible values include:
+
+        * RJCT_FRMT - Rejected - format error. Indicates rejection when the request
+        data is incorrectly formatted.
+
+        * RJCT_NFND - Rejected - not found. Indicates that the resource or information
+        associated with the resource was not found.
+
+        * RJCT_SYS - Rejected - system error. Indicates that the request was rejected
+        because of a system error.
+
+        * RJCT_TOUT - Rejected - timeout. Indicates a timeout in the resource session
+        processing.
+
+        * RJCT_AUTHZ - Rejected - authorization failed. Indicates that the identity
+        in context is not authorized to access the resource.
+
+        * RJCT_DPLCT - Rejected - application error. Indicates that duplicate record
+        is being added for the entity.
+
+        * RJCT_HTTP - Rejected - http error. Indicates that error while performing
+        http opertions.'
+    ErrorMessage:
+      type: string
+      description: Error message returned by the service
+    ErrorCodeAndMessage:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          $ref: '#/components/schemas/ErrorMessage'
+        fieldName:
+          type: string
+          description: Location/Field where the error occurred
+    ErrorResponse:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          $ref: '#/components/schemas/ErrorMessage'
+        correlationId:
+          $ref: '#/components/schemas/CorrelationId'
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCodeAndMessage'
+    Error400:
+      allOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+    Error401:
+      allOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+    Error403:
+      allOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+    Error404:
+      allOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+    Error500:
+      allOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+    AccountBalance2:
+      required:
+      - AcctTp
+      type: object
+      properties:
+        AcctTp:
+          $ref: '#/components/schemas/ISO8583AccountTypeCode'
+        Bal:
+          type: array
+          items:
+            $ref: '#/components/schemas/Balance28'
+    AccountDetails3:
+      type: object
+      properties:
+        AcctId:
+          $ref: '#/components/schemas/Max70Text'
+        AcctNm:
+          $ref: '#/components/schemas/Max70Text'
+        AcctTp:
+          $ref: '#/components/schemas/ISO8583AccountTypeCode'
+    Action13:
+      type: object
+      properties:
+        ActnTp:
+          $ref: '#/components/schemas/ActionType11Code'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        Dstn:
+          $ref: '#/components/schemas/PartyType20Code'
+        OthrActnTp:
+          $ref: '#/components/schemas/Max35Text'
+    ActionDestination1Code:
+      type: string
+      enum:
+      - FILE
+      - MOBL
+      - OTHN
+      - OTHP
+      - PECR
+      - POFS
+    ActionType10Code:
+      type: string
+      enum:
+      - ACTV
+      - DEAC
+      - DISP
+      - FUPD
+      - PRNT
+      - SNDM
+    ActionType11Code:
+      type: string
+      enum:
+      - CNTI
+      - CNIS
+      - CNTA
+      - CNAS
+      - CPTR
+      - CHDV
+      - VIPM
+      - TRCK
+      - TRXR
+      - OTHN
+      - OTHP
+      - SIGN
+    ActionType8Code:
+      type: string
+      enum:
+      - APPV
+      - BLCK
+      - CPTR
+      - DCLN
+      - RQID
+      - NDCL
+      - RFRL
+      - OTHN
+      - OTHP
+      - STUA
+    AddendumData3:
+      type: object
+      properties:
+        AddtlAccptrData:
+          $ref: '#/components/schemas/AdditionalAcceptorData1'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Cstmr:
+          $ref: '#/components/schemas/Customer4'
+        Fleet:
+          $ref: '#/components/schemas/FleetData4'
+        Instlmt:
+          $ref: '#/components/schemas/Instalment4'
+        Invc:
+          $ref: '#/components/schemas/Invoice2'
+        Ldgg:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lodging3'
+        OthrPurchsIdrTp:
+          $ref: '#/components/schemas/Max35Text'
+        PssngrTrnsprt:
+          $ref: '#/components/schemas/PassengerTransport2'
+        PurchsIdr:
+          $ref: '#/components/schemas/Max99Text'
+        PurchsIdrTp:
+          $ref: '#/components/schemas/PurchaseIdentifierType1Code'
+        Sale:
+          $ref: '#/components/schemas/Sale2'
+        ShppgData:
+          $ref: '#/components/schemas/ShippingData2'
+        TelecomSvcs:
+          $ref: '#/components/schemas/TelecomServices2'
+        TempSvcs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TemporaryServices2'
+        TrvlAgcy:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelAgency3'
+        VhclRntl:
+          type: array
+          items:
+            $ref: '#/components/schemas/VehicleRentalService2'
+    AddendumData4:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Fleet:
+          $ref: '#/components/schemas/FleetData5'
+        Instlmt:
+          $ref: '#/components/schemas/Instalment4'
+    AddendumTaxType2Code:
+      type: string
+      enum:
+      - TOTL
+      - ALMI
+      - ASNT
+      - BPTX
+      - KAPA
+      - NKAP
+      - CRTX
+      - CSTX
+      - CITX
+      - COAX
+      - CPST
+      - CORT
+      - COTX
+      - CUST
+      - DLTX
+      - DUTY
+      - EMIT
+      - EMUT
+      - EMET
+      - EMST
+      - EMRT
+      - ENTX
+      - ESET
+      - ENVT
+      - EQUL
+      - EQTX
+      - EUTR
+      - EXEC
+      - FEXT
+      - FNST
+      - FETX
+      - FVAT
+      - FVTS
+      - FIMT
+      - FSST
+      - FICA
+      - FRTX
+      - FSTX
+      - FSFT
+      - FUVT
+      - GIFT
+      - GCAT
+      - GRTX
+      - HVAT
+      - HATX
+      - HSTX
+      - HWTX
+      - INHT
+      - INPO
+      - LTTX
+      - FLST
+      - LITX
+      - LOCO
+      - LSTX
+      - LOCL
+      - LUTX
+      - MATX
+      - METX
+      - MITX
+      - MUTX
+      - MUDE
+      - COUN
+      - NATI
+      - OCTX
+      - OPTX
+      - OTHR
+      - OTHN
+      - OTHP
+      - OTTX
+      - LEVY
+      - POTX
+      - PRTX
+      - PSTX
+      - PPTX
+      - PROV
+      - PHET
+      - QUST
+      - ROCI
+      - RCSB
+      - RCSD
+      - ROTX
+      - RVAT
+      - ROVI
+      - SAUT
+      - SCTX
+      - SPTX
+      - STTA
+      - STAM
+      - SLST
+      - SLTX
+      - SETX
+      - STPT
+      - SPTS
+      - SPFT
+      - SPTG
+      - SRTX
+      - SSTX
+      - STAT
+      - STSL
+      - STEX
+      - SUTX
+      - CTAX
+      - TDDT
+      - TELT
+      - THTX
+      - TRAX
+      - TRAN
+      - UNSP
+      - UUTX
+      - VATA
+      - VATB
+      - WTAX
+      - WESV
+      - WITF
+      - WITL
+      - WITH
+      - TNRT
+    AdditionalAcceptorData1:
+      type: object
+      properties:
+        AddtlId:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalIdentification1'
+        AddtlInf:
+          $ref: '#/components/schemas/Max350Text'
+        AddtlTxRefNb:
+          $ref: '#/components/schemas/Max70Text'
+        Chrtcs:
+          $ref: '#/components/schemas/AdditionalCharacteristics1'
+        CorpTaxId:
+          $ref: '#/components/schemas/Max35Text'
+        CorpTaxIdTp:
+          $ref: '#/components/schemas/CorporateTaxType1Code'
+        TaxRegnId:
+          $ref: '#/components/schemas/Max70Text'
+    AdditionalAction1:
+      type: object
+      properties:
+        Cntt:
+          $ref: '#/components/schemas/Content1'
+        Dstn:
+          $ref: '#/components/schemas/PartyType21Code'
+        DstnAdr:
+          $ref: '#/components/schemas/Max70Text'
+        DstnTp:
+          $ref: '#/components/schemas/ActionDestination1Code'
+        Frmt:
+          $ref: '#/components/schemas/OutputFormat4Code'
+        OthrDstn:
+          $ref: '#/components/schemas/Max35Text'
+        OthrDstnTp:
+          $ref: '#/components/schemas/Max35Text'
+        OthrFrmt:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/ActionType10Code'
+    AdditionalAmounts3:
+      required:
+      - Amt
+      - Tp
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Amt:
+          $ref: '#/components/schemas/Amount17'
+        Desc:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/ISO8583AmountTypeCode'
+    AdditionalCharacteristicDetails1:
+      required:
+      - Tp
+      type: object
+      properties:
+        PrvddBy:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    AdditionalCharacteristics1:
+      type: object
+      properties:
+        BizTp:
+          $ref: '#/components/schemas/AdditionalCharacteristicDetails1'
+        Certfctn:
+          $ref: '#/components/schemas/AdditionalCharacteristicDetails1'
+        Ownr:
+          $ref: '#/components/schemas/AdditionalCharacteristicDetails1'
+        OwnrEthncty:
+          $ref: '#/components/schemas/AdditionalCharacteristicDetails1'
+    AdditionalData1:
+      type: object
+      properties:
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max2048Text'
+    AdditionalFee2:
+      required:
+      - FeeAmt
+      - Tp
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Desc:
+          $ref: '#/components/schemas/Max140Text'
+        FeeAmt:
+          $ref: '#/components/schemas/FeeAmount3'
+        FeeDscrptr:
+          $ref: '#/components/schemas/Max35Text'
+        FeePrgm:
+          $ref: '#/components/schemas/Max35Text'
+        FeeRcncltnAmt:
+          $ref: '#/components/schemas/FeeAmount3'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/TypeOfAmount21Code'
+    AdditionalIdentification1:
+      required:
+      - Tp
+      - Val
+      type: object
+      properties:
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/AdditionalIdentificationType1Code'
+        Val:
+          $ref: '#/components/schemas/Max35Text'
+    AdditionalIdentificationType1Code:
+      type: string
+      enum:
+      - OTHP
+      - OTHN
+      - ICSN
+      - ATNU
+    AdditionalInformation19:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        NtrdDataAlphaNmrc:
+          $ref: '#/components/schemas/Max350Text'
+        NtrdDataNmrc:
+          $ref: '#/components/schemas/Max35NumericText'
+    AdditionalInformation29:
+      required:
+      - Lang
+      - Val
+      type: object
+      properties:
+        Frmt:
+          $ref: '#/components/schemas/OutputFormat4Code'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        OthrFrmt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrRcpt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTrgt:
+          $ref: '#/components/schemas/Max35Text'
+        Rcpt:
+          $ref: '#/components/schemas/PartyType22Code'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Trgt:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInterface6Code'
+        Val:
+          $ref: '#/components/schemas/Max20KText'
+    AdditionalRiskData1:
+      required:
+      - Tp
+      - Val
+      type: object
+      properties:
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max10KText'
+    AdditionalService2:
+      required:
+      - Tp
+      type: object
+      properties:
+        OthrRslt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Rslt:
+          $ref: '#/components/schemas/AdditionalServiceResult1Code'
+        SvcDtl:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Tp:
+          $ref: '#/components/schemas/AdditionalServiceType2Code'
+    AdditionalServiceResult1Code:
+      type: string
+      enum:
+      - NOPF
+      - NOSP
+      - OTHN
+      - OTHP
+      - PERF
+    AdditionalServiceType2Code:
+      type: string
+      enum:
+      - CACT
+      - CSHB
+      - DCCV
+      - INTP
+      - INTT
+      - LOYT
+      - OTHN
+      - OTHP
+      - PRST
+      - BALC
+    Address2:
+      type: object
+      properties:
+        AdrLine1:
+          $ref: '#/components/schemas/Max99Text'
+        AdrLine2:
+          $ref: '#/components/schemas/Max99Text'
+        BldgNb:
+          $ref: '#/components/schemas/Max16Text'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        CtrySubDvsnMjr:
+          $ref: '#/components/schemas/ISOCountrySubDivisionCode'
+        CtrySubDvsnMjrNm:
+          $ref: '#/components/schemas/Max50Text'
+        CtrySubDvsnMnr:
+          $ref: '#/components/schemas/ISOCountrySubDivisionCode'
+        CtrySubDvsnMnrNm:
+          $ref: '#/components/schemas/Max50Text'
+        PstlCd:
+          $ref: '#/components/schemas/Max16Text'
+        StrtNm:
+          $ref: '#/components/schemas/Max99Text'
+        TwnNm:
+          $ref: '#/components/schemas/Max50Text'
+    Address3:
+      type: object
+      properties:
+        AdrLine1:
+          $ref: '#/components/schemas/Max200Text'
+        AdrLine2:
+          $ref: '#/components/schemas/Max200Text'
+        BldgNb:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        CtrySubDvsnMjrNm:
+          $ref: '#/components/schemas/DUPLICATE_Max100Text'
+        CtrySubDvsnMnrNm:
+          $ref: '#/components/schemas/DUPLICATE_Max100Text'
+        PstlCd:
+          $ref: '#/components/schemas/Max35Text'
+        StrtNm:
+          $ref: '#/components/schemas/Max200Text'
+        TwnNm:
+          $ref: '#/components/schemas/DUPLICATE_Max100Text'
+    Adjustment10:
+      type: object
+      properties:
+        AddtlTp:
+          $ref: '#/components/schemas/Max35Text'
+        AdjstmntAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Desc:
+          $ref: '#/components/schemas/Max70Text'
+        Pctg:
+          $ref: '#/components/schemas/PercentageRate'
+        PrmtnCd:
+          $ref: '#/components/schemas/Max35Text'
+        PrmtnCpnNb:
+          $ref: '#/components/schemas/Max35Text'
+        PrmtnElgblty:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Qty:
+          $ref: '#/components/schemas/DecimalNumber'
+        Rsn:
+          $ref: '#/components/schemas/Max35Text'
+        TaxClctdOnOrgnlAmt:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        UnitPric:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+    Adjustment12:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        Rsn:
+          $ref: '#/components/schemas/Max35Text'
+    Adjustment9:
+      type: object
+      properties:
+        AddtlTp:
+          $ref: '#/components/schemas/Max35Text'
+        AdjstmntAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Desc:
+          $ref: '#/components/schemas/Max70Text'
+        Pctg:
+          $ref: '#/components/schemas/PercentageRate'
+        PrmtnCd:
+          $ref: '#/components/schemas/Max35Text'
+        Rsn:
+          $ref: '#/components/schemas/Max35Text'
+        TaxClctdOnOrgnlAmt:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    Algorithm11Code:
+      type: string
+      enum:
+      - HS25
+      - HS38
+      - HS51
+      - HS01
+    Algorithm13Code:
+      type: string
+      enum:
+      - EA2C
+      - E3DC
+      - DKP9
+      - UKPT
+      - UKA1
+      - EA9C
+      - EA5C
+    Algorithm16Code:
+      type: string
+      enum:
+      - HS25
+      - HS38
+      - HS51
+      - HS01
+      - SH31
+      - SH32
+      - SH33
+      - SH35
+      - SHK1
+      - SHK2
+    Algorithm17Code:
+      type: string
+      enum:
+      - MACC
+      - MCCS
+      - CMA1
+      - MCC1
+      - CMA9
+      - CMA5
+      - CMA2
+      - CM31
+      - CM32
+      - CM33
+      - MCS3
+      - CCA1
+      - CCA2
+      - CCA3
+    Algorithm18Code:
+      type: string
+      enum:
+      - EA2C
+      - E3DC
+      - DKP9
+      - UKPT
+      - UKA1
+      - EA9C
+      - EA5C
+      - DA12
+      - DA19
+      - DA25
+      - N108
+      - EA5R
+      - EA9R
+      - EA2R
+      - E3DR
+      - E36C
+      - E36R
+      - SD5C
+    Algorithm19Code:
+      type: string
+      enum:
+      - ERS2
+      - ERS1
+      - RPSS
+      - ECC5
+      - ECC1
+      - ECC4
+      - ECC2
+      - ECC3
+      - ERS3
+      - ECP2
+      - ECP3
+      - ECP5
+    Algorithm20Code:
+      type: string
+      enum:
+      - HS25
+      - HS38
+      - HS51
+    Algorithm23Code:
+      type: string
+      enum:
+      - EA2C
+      - E3DC
+      - EA9C
+      - EA5C
+      - EA2R
+      - EA9R
+      - EA5R
+      - E3DR
+      - E36C
+      - E36R
+      - SD5C
+    Algorithm5Code:
+      type: string
+      enum:
+      - HS25
+      - HS38
+      - HS51
+    Algorithm7Code:
+      type: string
+      enum:
+      - ERSA
+      - RSAO
+    Algorithm8Code:
+      type: string
+      enum:
+      - MGF1
+    AlgorithmIdentification12:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm8Code'
+        Param:
+          $ref: '#/components/schemas/Parameter5'
+    AlgorithmIdentification18:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm8Code'
+        Param:
+          $ref: '#/components/schemas/Parameter9'
+    AlgorithmIdentification19:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm7Code'
+        Param:
+          $ref: '#/components/schemas/Parameter10'
+    AlgorithmIdentification20:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm19Code'
+        Param:
+          $ref: '#/components/schemas/Parameter11'
+    AlgorithmIdentification21:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm16Code'
+    AlgorithmIdentification22:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm17Code'
+        Param:
+          $ref: '#/components/schemas/Parameter7'
+    AlgorithmIdentification23:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm18Code'
+        Param:
+          $ref: '#/components/schemas/Parameter12'
+    AlgorithmIdentification24:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm18Code'
+        Param:
+          $ref: '#/components/schemas/Parameter12'
+    AlgorithmIdentification25:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm23Code'
+        Param:
+          $ref: '#/components/schemas/Parameter7'
+    AlgorithmIdentification26:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm8Code'
+        Param:
+          $ref: '#/components/schemas/Algorithm5Code'
+    AlgorithmIdentification27:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm7Code'
+        Param:
+          $ref: '#/components/schemas/Parameter13'
+    AlgorithmIdentification28:
+      required:
+      - Algo
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Algorithm13Code'
+        Param:
+          $ref: '#/components/schemas/Parameter14'
+    Amount12:
+      type: object
+      properties:
+        Hrs:
+          $ref: '#/components/schemas/Max6NumericText'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Rate:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Tp:
+          $ref: '#/components/schemas/TemporaryServicesCharge1Code'
+    Amount13:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Desc:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    Amount15:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        ConvsDt:
+          $ref: '#/components/schemas/ISODate'
+        ConvsTm:
+          $ref: '#/components/schemas/ISOTime'
+        FctvXchgRate:
+          $ref: '#/components/schemas/BaseOne25Rate'
+    Amount16:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+    Amount17:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+    Amount18:
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        CstmrNtfdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/CarRentalServiceType2Code'
+    Amount19:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        Desc:
+          $ref: '#/components/schemas/Max35Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    Amount20:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        OthrTpOfChrg:
+          $ref: '#/components/schemas/Max35Text'
+        TpOfChrg:
+          $ref: '#/components/schemas/TypeOfAmount19Code'
+    AmountDetails2:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        Tp:
+          $ref: '#/components/schemas/TypeOfAmount20Code'
+    AncillaryPurchase2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Amt:
+          $ref: '#/components/schemas/Amount16'
+        AncllryDocNb:
+          $ref: '#/components/schemas/Max15Text'
+        CdtRsnCd:
+          $ref: '#/components/schemas/Max35Text'
+        Fee:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        RltdDocNb:
+          $ref: '#/components/schemas/Max15Text'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        SvcCtgyCd:
+          $ref: '#/components/schemas/Max4Text'
+        SvcPrvdrSvcTp:
+          $ref: '#/components/schemas/Max35Text'
+        SvcSubCtgyCd:
+          $ref: '#/components/schemas/Max4Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    ApprovalEntity2:
+      required:
+      - Tp
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/PartyType9Code'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/PartyType26Code'
+    AttributeType1Code:
+      type: string
+      enum:
+      - CNAT
+      - LATT
+      - OATT
+      - OUAT
+      - CATT
+    AuthenticatedData5:
+      required:
+      - MAC
+      - MACAlgo
+      - NcpsltdCntt
+      - Rcpt
+      type: object
+      properties:
+        MAC:
+          $ref: '#/components/schemas/Max140Binary'
+        MACAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification22'
+        NcpsltdCntt:
+          $ref: '#/components/schemas/EncapsulatedContent3'
+        Rcpt:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient6Choice'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    AuthorisationInitiation2:
+      required:
+      - Cntxt
+      - Envt
+      - Tx
+      type: object
+      properties:
+        AdddmData:
+          $ref: '#/components/schemas/AddendumData3'
+        Cntxt:
+          $ref: '#/components/schemas/Context10'
+        Envt:
+          $ref: '#/components/schemas/Environment17'
+        ICCRltdData:
+          $ref: '#/components/schemas/Max10KHexBinaryText'
+        PrcgRslt:
+          $ref: '#/components/schemas/ProcessingResult16'
+        PrtctdData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtectedData1'
+        SplmtryData:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplementaryData1'
+        Tx:
+          $ref: '#/components/schemas/Transaction142'
+    AuthorisationInitiationV03:
+      required:
+      - Body
+      - Hdr
+      type: object
+      properties:
+        Body:
+          $ref: '#/components/schemas/AuthorisationInitiation2'
+        Hdr:
+          $ref: '#/components/schemas/Header62'
+        SctyTrlr:
+          $ref: '#/components/schemas/ContentInformationType20'
+    AuthorisationResponse2:
+      required:
+      - Envt
+      - PrcgRslt
+      - Tx
+      type: object
+      properties:
+        AdddmData:
+          $ref: '#/components/schemas/AddendumData4'
+        Cntxt:
+          $ref: '#/components/schemas/Context13'
+        Envt:
+          $ref: '#/components/schemas/Environment26'
+        ICCRltdData:
+          $ref: '#/components/schemas/Max10KHexBinaryText'
+        PrcgRslt:
+          $ref: '#/components/schemas/ProcessingResult10'
+        PrtctdData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtectedData1'
+        SplmtryData:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplementaryData1'
+        Tx:
+          $ref: '#/components/schemas/Transaction150'
+    AuthorisationResponseV03:
+      required:
+      - Body
+      - Hdr
+      type: object
+      properties:
+        Body:
+          $ref: '#/components/schemas/AuthorisationResponse2'
+        Hdr:
+          $ref: '#/components/schemas/Header62'
+        SctyTrlr:
+          $ref: '#/components/schemas/ContentInformationType20'
+    AuthorisedAmount1:
+      required:
+      - Amt
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        DtTm:
+          $ref: '#/components/schemas/ISODateTime'
+    Authority1:
+      type: object
+      properties:
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        CtrySubDvsnMjr:
+          $ref: '#/components/schemas/ISOCountrySubDivisionCode'
+        CtrySubDvsnMjrNm:
+          $ref: '#/components/schemas/Max50Text'
+        CtrySubDvsnMnr:
+          $ref: '#/components/schemas/ISOCountrySubDivisionCode'
+        CtrySubDvsnMnrNm:
+          $ref: '#/components/schemas/Max50Text'
+        Nm:
+          $ref: '#/components/schemas/Max50Text'
+    Balance28:
+      required:
+      - Amt
+      - Tp
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        BalDt:
+          $ref: '#/components/schemas/ISODate'
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        CrdhldrCcyInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/BalanceType15Code'
+    BalanceType15Code:
+      type: string
+      enum:
+      - AMOH
+      - AMTO
+      - AMTD
+      - CRDL
+      - OTHN
+      - OTHP
+      - AVLB
+      - CLRI
+      - LDGR
+      - PNTS
+    BaseOne25Rate:
+      type: number
+    BaseOneRate:
+      type: number
+    BatchManagementInformation1:
+      required:
+      - BtchId
+      type: object
+      properties:
+        BtchId:
+          $ref: '#/components/schemas/Max35Text'
+        ColltnId:
+          $ref: '#/components/schemas/Max35Text'
+        MsgChcksmInptVal:
+          $ref: '#/components/schemas/Max140Binary'
+        MsgSeqNb:
+          $ref: '#/components/schemas/Max15NumericText'
+    BytePadding1Code:
+      type: string
+      enum:
+      - LNGT
+      - NUL8
+      - NULG
+      - 'NULL'
+      - RAND
+    Capabilities2:
+      type: object
+      properties:
+        ApprvlCdLngth:
+          $ref: '#/components/schemas/Number'
+        CardCaptrCpbl:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CardRdngCpblty:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardReadingCapabilities1'
+        CardWrtgCpblty:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardWritingCapabilities1'
+        CrdhldrVrfctnCpblty:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardholderVerificationCapabilities1'
+        MsgCpblty:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisplayCapabilities6'
+        MxScrptLngth:
+          $ref: '#/components/schemas/Number'
+        OnLineCpblty:
+          $ref: '#/components/schemas/OnLineCapability2Code'
+        OthrPINNtrySctyChrtc:
+          $ref: '#/components/schemas/Max35Text'
+        PINLngthCpblty:
+          $ref: '#/components/schemas/Number'
+        PINNtrySctyChrtc:
+          $ref: '#/components/schemas/PINEntrySecurityCharacteristic1Code'
+        TempScrCardDataStorg:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    CarRentalActivity1Code:
+      type: string
+      enum:
+      - CARS
+      - GLBL
+      - INDV
+      - PETP
+      - OTHP
+      - OTHN
+      - OTHR
+    CarRentalServiceType2Code:
+      type: string
+      enum:
+      - ADJM
+      - AUTH
+      - BAST
+      - CLEA
+      - DMGS
+      - DLVR
+      - DPOF
+      - ENTE
+      - EXTC
+      - EXDY
+      - EXDI
+      - EXHR
+      - FINE
+      - FUEL
+      - GARA
+      - GPSY
+      - INSU
+      - LATE
+      - LIIN
+      - LDIN
+      - MISC
+      - NAVI
+      - NOSH
+      - ONEW
+      - OTHN
+      - OTHP
+      - PARK
+      - PRIN
+      - PFIN
+      - PHON
+      - REGD
+      - SMOK
+      - TOLL
+      - TOWI
+    CardData6:
+      type: object
+      properties:
+        AddtlCardData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        CardCtryCd:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        CardPdctSubTp:
+          $ref: '#/components/schemas/Max35Text'
+        CardPdctTp:
+          $ref: '#/components/schemas/Max35Text'
+        CardPrtflIdr:
+          $ref: '#/components/schemas/Max35Text'
+        CardSeqNb:
+          $ref: '#/components/schemas/Min2Max3NumericText'
+        FctvDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+        PAN:
+          $ref: '#/components/schemas/Max19NumericText'
+        PANAcctRg:
+          $ref: '#/components/schemas/Max19NumericText'
+        PmtAcctRef:
+          $ref: '#/components/schemas/Max35Text'
+        PrtctdPANInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SvcCd:
+          $ref: '#/components/schemas/Exact3NumericText'
+        Trck1:
+          $ref: '#/components/schemas/Max76Text'
+        Trck2:
+          $ref: '#/components/schemas/Track2Data1Choice'
+        Trck3:
+          $ref: '#/components/schemas/Max104Text'
+        XpryDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+    CardData9:
+      type: object
+      properties:
+        AddtlCardData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        CardCcyCd:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        CardCtryCd:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        CardPdctSubTp:
+          $ref: '#/components/schemas/Max35Text'
+        CardPdctTp:
+          $ref: '#/components/schemas/Max35Text'
+        CardPrtflIdr:
+          $ref: '#/components/schemas/Max35Text'
+        CardSeqNb:
+          $ref: '#/components/schemas/Min2Max3NumericText'
+        FctvDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+        PAN:
+          $ref: '#/components/schemas/Max19NumericText'
+        PANAcctRg:
+          $ref: '#/components/schemas/Max19NumericText'
+        PANFourLastDgts:
+          $ref: '#/components/schemas/Max4NumericText'
+        PmtAcctRef:
+          $ref: '#/components/schemas/Max35Text'
+        PrtctdPANInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Trck3:
+          $ref: '#/components/schemas/Max104Text'
+        XpryDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+    CardDataReading10Code:
+      type: string
+      enum:
+      - ICPY
+      - MGST
+      - ICCY
+      - MICR
+      - MLEY
+      - OCRR
+      - MSIP
+      - OPTC
+      - OTHN
+      - RFID
+      - UNSP
+      - OTHP
+      - KEEN
+      - DFLE
+    CardDataReading5Code:
+      type: string
+      enum:
+      - TAGC
+      - PHYS
+      - BRCD
+      - MGST
+      - CICC
+      - DFLE
+      - CTLS
+      - ECTL
+      - CDFL
+    CardDataReading9Code:
+      type: string
+      enum:
+      - UNKW
+      - OTHN
+      - OTHP
+      - CAMR
+      - KEEN
+      - ICPY
+      - OPTC
+      - CDFL
+      - MBNK
+      - TOKN
+      - ICCY
+    CardDataWriting1Code:
+      type: string
+      enum:
+      - ICPY
+      - MGST
+      - ICCY
+      - MSIP
+      - OTHN
+      - UNSP
+      - OTHP
+    CardDepositType1Code:
+      type: string
+      enum:
+      - OTHP
+      - OTHN
+      - ENVL
+      - CHEC
+      - CASH
+    CardProgramme2:
+      type: object
+      properties:
+        CardPrgrmmApld:
+          $ref: '#/components/schemas/CardProgrammeMode3'
+        CardPrgrmmPropsd:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardProgrammeMode2'
+    CardProgrammeMode2:
+      required:
+      - Id
+      type: object
+      properties:
+        Id:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    CardProgrammeMode3:
+      required:
+      - Id
+      type: object
+      properties:
+        AddtlId:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    CardReadingCapabilities1:
+      required:
+      - Cpblty
+      type: object
+      properties:
+        Cpblty:
+          $ref: '#/components/schemas/CardDataReading10Code'
+        OthrCpblty:
+          $ref: '#/components/schemas/Max35Text'
+    CardWritingCapabilities1:
+      required:
+      - Cpblty
+      type: object
+      properties:
+        Cpblty:
+          $ref: '#/components/schemas/CardDataWriting1Code'
+        OthrCpblty:
+          $ref: '#/components/schemas/Max35Text'
+    Cardholder19:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        CrdhldrNm:
+          $ref: '#/components/schemas/CardholderName3'
+        CtctInf:
+          $ref: '#/components/schemas/Contact1'
+        DtOfBirth:
+          $ref: '#/components/schemas/ISODate'
+        HghValCstmrInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Id:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credentials2'
+        LclData:
+          $ref: '#/components/schemas/LocalData7'
+    CardholderName2:
+      type: object
+      properties:
+        GvnNm:
+          $ref: '#/components/schemas/Max70Text'
+        LastNm:
+          $ref: '#/components/schemas/Max70Text'
+        MddlNm:
+          $ref: '#/components/schemas/Max70Text'
+        Nm:
+          $ref: '#/components/schemas/Max140Text'
+    CardholderName3:
+      type: object
+      properties:
+        GvnNm:
+          $ref: '#/components/schemas/Max35Text'
+        LastNm:
+          $ref: '#/components/schemas/Max35Text'
+        MddlNm:
+          $ref: '#/components/schemas/Max35Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    CardholderVerificationCapabilities1:
+      required:
+      - Cpblty
+      type: object
+      properties:
+        Cpblty:
+          $ref: '#/components/schemas/CardholderVerificationCapability5Code'
+        OthrCpblty:
+          $ref: '#/components/schemas/Max35Text'
+    CardholderVerificationCapability5Code:
+      type: string
+      enum:
+      - APKI
+      - NOVF
+      - FBIG
+      - FBIO
+      - FDSG
+      - FCPN
+      - FEPN
+      - NBIO
+      - NPIN
+      - OTHN
+      - OTHP
+      - SIGN
+      - UNSP
+      - VORN
+      - PKIS
+      - NOPN
+      - NOOP
+    CarrierIdentification1:
+      type: object
+      properties:
+        Cd:
+          $ref: '#/components/schemas/Max35Text'
+        IATACd:
+          $ref: '#/components/schemas/Max35Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    CertificateIssuer1:
+      required:
+      - RltvDstngshdNm
+      type: object
+      properties:
+        RltvDstngshdNm:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/RelativeDistinguishedName1'
+    ClaimInformation1:
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        ClmCrdntls:
+          $ref: '#/components/schemas/Max500Text'
+    CommunicationCharacteristics3:
+      required:
+      - Actv
+      - ComTp
+      - RmotPty
+      type: object
+      properties:
+        Actv:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ComTp:
+          $ref: '#/components/schemas/POICommunicationType2Code'
+        RmotPty:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyType7Code'
+    CompanyAssigner2Code:
+      type: string
+      enum:
+      - ASSO
+      - AUTH
+      - CPNY
+      - LEII
+      - TRAG
+      - OTHP
+      - OTHN
+    Contact1:
+      type: object
+      properties:
+        BizEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        BizPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        HomePhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Lang:
+          $ref: '#/components/schemas/ISO2ALanguageCode'
+        MobPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        OthrEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        OthrPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        PrsnlEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+    Contact2:
+      type: object
+      properties:
+        BizEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        BizFaxNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        BizPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        HomeFaxNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        HomePhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Lang:
+          $ref: '#/components/schemas/ISO2ALanguageCode'
+        MobPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        OthrEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        OthrPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        PrsnlEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        URLAdr:
+          $ref: '#/components/schemas/Max256Text'
+    Contact3:
+      type: object
+      properties:
+        CntrlPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Email:
+          $ref: '#/components/schemas/Max256Text'
+        FaxNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Lang:
+          $ref: '#/components/schemas/LanguageCode'
+        PrprtyPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        TollFreePhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        URLAdr:
+          $ref: '#/components/schemas/Max256Text'
+    Contact6:
+      type: object
+      properties:
+        BizEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        BizFaxNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        BizPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        HomeFaxNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        HomePhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Lang:
+          $ref: '#/components/schemas/LanguageCode'
+        MobPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        OthrEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        OthrPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        PrsnlEmailAdr:
+          $ref: '#/components/schemas/Max256Text'
+        URLAdr:
+          $ref: '#/components/schemas/Max256Text'
+    Content1:
+      required:
+      - Val
+      type: object
+      properties:
+        CertId:
+          $ref: '#/components/schemas/Max70Text'
+        Sgntr:
+          $ref: '#/components/schemas/Max140Binary'
+        Val:
+          $ref: '#/components/schemas/Max20KText'
+    ContentInformationType19:
+      required:
+      - CnttTp
+      type: object
+      properties:
+        AuthntcdData:
+          $ref: '#/components/schemas/AuthenticatedData5'
+        CnttTp:
+          $ref: '#/components/schemas/ContentType2Code'
+        DgstdData:
+          $ref: '#/components/schemas/DigestedData5'
+        EnvlpdData:
+          $ref: '#/components/schemas/EnvelopedData5'
+        SgndData:
+          $ref: '#/components/schemas/SignedData5'
+    ContentInformationType20:
+      required:
+      - MAC
+      - MACData
+      type: object
+      properties:
+        MAC:
+          $ref: '#/components/schemas/Max8HexBinaryText'
+        MACData:
+          $ref: '#/components/schemas/MACData1'
+    ContentType2Code:
+      type: string
+      enum:
+      - DATA
+      - SIGN
+      - EVLP
+      - DGST
+      - AUTH
+    ContentType3Code:
+      type: string
+      enum:
+      - EVLP
+      - IFSE
+    Context10:
+      required:
+      - PtOfSvcCntxt
+      - TxCntxt
+      type: object
+      properties:
+        PtOfSvcCntxt:
+          $ref: '#/components/schemas/PointOfServiceContext3'
+        RskCntxt:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskContext2'
+        SaleCntxt:
+          $ref: '#/components/schemas/SaleContext8'
+        TxCntxt:
+          $ref: '#/components/schemas/TransactionContext7'
+        Vrfctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Verification5'
+    Context13:
+      type: object
+      properties:
+        PtOfSvcCntxt:
+          $ref: '#/components/schemas/PointOfServiceContext4'
+        RskCntxt:
+          $ref: '#/components/schemas/RiskContext2'
+        TxCntxt:
+          $ref: '#/components/schemas/TransactionContext8'
+        Vrfctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Verification4'
+    CorporateTaxType1Code:
+      type: string
+      enum:
+      - SMBS
+      - OTHR
+      - CORP
+    Credentials2:
+      required:
+      - IdCd
+      - IdVal
+      type: object
+      properties:
+        AssgnrAuthrty:
+          $ref: '#/components/schemas/Authority1'
+        IdCd:
+          $ref: '#/components/schemas/Identification3Code'
+        IdVal:
+          $ref: '#/components/schemas/Max70Text'
+        IdXpryDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+        OthrIdCd:
+          $ref: '#/components/schemas/Max35Text'
+    CreditDebit3Code:
+      type: string
+      enum:
+      - CRDT
+      - DBIT
+    CryptographicKey13:
+      required:
+      - Id
+      - Vrsn
+      type: object
+      properties:
+        ActvtnDt:
+          $ref: '#/components/schemas/ISODateTime'
+        AddtlId:
+          $ref: '#/components/schemas/Max35Binary'
+        AddtlMgmtInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenericInformation1'
+        DeactvtnDt:
+          $ref: '#/components/schemas/ISODateTime'
+        Fctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyUsage1Code'
+        Id:
+          $ref: '#/components/schemas/Max140Text'
+        KeyChckVal:
+          $ref: '#/components/schemas/Max35Binary'
+        KeyVal:
+          $ref: '#/components/schemas/ContentInformationType19'
+        Tp:
+          $ref: '#/components/schemas/CryptographicKeyType3Code'
+        Vrsn:
+          $ref: '#/components/schemas/Max256Text'
+    CryptographicKeyType3Code:
+      type: string
+      enum:
+      - AES2
+      - EDE3
+      - DKP9
+      - AES9
+      - AES5
+      - EDE4
+    Customer4:
+      type: object
+      properties:
+        AuthrsdCtctCpny:
+          $ref: '#/components/schemas/Max70Text'
+        AuthrsdCtctNm:
+          $ref: '#/components/schemas/Max70Text'
+        AuthrsdCtctPhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        CstmrRltsh:
+          $ref: '#/components/schemas/Max35Text'
+        RefNb:
+          $ref: '#/components/schemas/Max35Text'
+        TaxRegnId:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max70Text'
+        Tp:
+          $ref: '#/components/schemas/CustomerType2Code'
+        VIPInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    Customer6:
+      type: object
+      properties:
+        AcctNb:
+          $ref: '#/components/schemas/Max35Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        PhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+    Customer7:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Crdntls:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credentials2'
+        CstmrDsgnt:
+          $ref: '#/components/schemas/Max2NumericText'
+        CstmrId:
+          $ref: '#/components/schemas/Max35Text'
+        CtctInf:
+          $ref: '#/components/schemas/Contact6'
+        CtryOfBirth:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        DtOfBirth:
+          $ref: '#/components/schemas/ISODate'
+        LclData:
+          $ref: '#/components/schemas/LocalData3'
+        Nm:
+          $ref: '#/components/schemas/CardholderName3'
+        Ntlty:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+    Customer8:
+      required:
+      - Id
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Age:
+          $ref: '#/components/schemas/Max2NumericText'
+        CstmrFileRefNb:
+          $ref: '#/components/schemas/Max70Text'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification208'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    CustomerAssigner1Code:
+      type: string
+      enum:
+      - AUTH
+      - CRCY
+      - CUST
+      - ONFL
+      - OTHR
+      - TRAY
+    CustomerDevice4:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Dvc:
+          $ref: '#/components/schemas/Device2'
+        DvcId:
+          $ref: '#/components/schemas/DeviceIdentification1'
+        OprgSys:
+          $ref: '#/components/schemas/DeviceOperatingSystem1'
+        Prvdr:
+          $ref: '#/components/schemas/Max35Text'
+    CustomerDeviceType2Code:
+      type: string
+      enum:
+      - MOBL
+      - OTHN
+      - OTHP
+      - PECR
+      - TBLT
+      - NSCR
+      - SECR
+      - EMBD
+      - VHCL
+      - WRBL
+      - WATC
+      - GAMB
+      - JEWL
+      - KFOB
+      - STIC
+      - UNKW
+    CustomerReference1:
+      type: object
+      properties:
+        Dtl:
+          $ref: '#/components/schemas/Max70Text'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+    CustomerType2Code:
+      type: string
+      enum:
+      - CSMR
+      - CPNY
+    DUPLICATE_Max100Text:
+      minLength: 1
+      maxLength: 100
+      type: string
+    DecimalNumber:
+      type: number
+    DeliveryInformation4:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        DlvryNoteNb:
+          $ref: '#/components/schemas/Max35Text'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        Instrs:
+          $ref: '#/components/schemas/Max350Text'
+        Tm:
+          $ref: '#/components/schemas/ISOTime'
+    DepartureOrArrival1:
+      type: object
+      properties:
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        Lctn:
+          $ref: '#/components/schemas/Max70Text'
+        Tm:
+          $ref: '#/components/schemas/ISOTime'
+    DepartureOrArrival2:
+      type: object
+      properties:
+        CrrierCd:
+          $ref: '#/components/schemas/Max35Text'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        RouteNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        Tm:
+          $ref: '#/components/schemas/ISOTime'
+    DepositDetails2:
+      required:
+      - Tp
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/Amount16'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/CardDepositType1Code'
+    Destination3:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        NmAndLctn:
+          $ref: '#/components/schemas/Max99Text'
+    DetailedAmount22:
+      required:
+      - Amt
+      - Tp
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        CrdhldrBllgAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Desc:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        RcncltnAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Tp:
+          $ref: '#/components/schemas/ISO8583AmountTypeCode'
+    Device2:
+      type: object
+      properties:
+        DvcNm:
+          $ref: '#/components/schemas/DUPLICATE_Max100Text'
+        DvcNmNrmlzd:
+          $ref: '#/components/schemas/DUPLICATE_Max100Text'
+        Email:
+          $ref: '#/components/schemas/Max256Text'
+        GeogcLctn:
+          $ref: '#/components/schemas/GeographicPointInDecimalDegrees'
+        IPAdr:
+          $ref: '#/components/schemas/Max70Text'
+        Lang:
+          $ref: '#/components/schemas/LanguageCode'
+        LctnCtryCd:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        Manfctr:
+          $ref: '#/components/schemas/Max70Text'
+        ManfctrMdlId:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        PhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Tp:
+          $ref: '#/components/schemas/CustomerDeviceType2Code'
+    DeviceIdentification1:
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/Max70Text'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/DeviceIdentificationType1Code'
+    DeviceIdentificationType1Code:
+      type: string
+      enum:
+      - IMEI
+      - OTHN
+      - OTHP
+      - SEID
+      - SENU
+    DeviceOperatingSystem1:
+      type: object
+      properties:
+        Bld:
+          $ref: '#/components/schemas/Max70Text'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/DeviceOperatingSystemType1Code'
+        Vrsn:
+          $ref: '#/components/schemas/Max35Text'
+    DeviceOperatingSystemType1Code:
+      type: string
+      enum:
+      - DROI
+      - BLCK
+      - IOSS
+      - OTHN
+      - OTHP
+      - TIZN
+      - WIND
+    DigestedData5:
+      required:
+      - Dgst
+      - DgstAlgo
+      - NcpsltdCntt
+      type: object
+      properties:
+        Dgst:
+          $ref: '#/components/schemas/Max140Binary'
+        DgstAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification21'
+        NcpsltdCntt:
+          $ref: '#/components/schemas/EncapsulatedContent3'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    Discount3:
+      required:
+      - Val
+      type: object
+      properties:
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max35Text'
+    DisplayCapabilities6:
+      required:
+      - Dstn
+      type: object
+      properties:
+        AvlblFrmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputFormat1Code'
+        AvlblLang:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageCode'
+        Dstn:
+          $ref: '#/components/schemas/UserInterface1Code'
+        LineWidth:
+          $ref: '#/components/schemas/Number'
+        NbOfLines:
+          $ref: '#/components/schemas/Number'
+    DisputeData3:
+      type: object
+      properties:
+        AddtlDsptData:
+          $ref: '#/components/schemas/AdditionalData1'
+        ChrgbckElgblty:
+          $ref: '#/components/schemas/Max35Text'
+        DcmnttnSts:
+          $ref: '#/components/schemas/Max35Text'
+        DsptCond:
+          $ref: '#/components/schemas/Max35Text'
+        DsptRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeReference1'
+        DsptRjctRsn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max35Text'
+        DsptSts:
+          $ref: '#/components/schemas/Max35Text'
+        PresntmntCycl:
+          $ref: '#/components/schemas/Exact1NumericText'
+        PrtlDspt:
+          $ref: '#/components/schemas/YesNoIndicator'
+    DisputeIdentification1:
+      required:
+      - Id
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    DisputeReference1:
+      required:
+      - DsptId
+      type: object
+      properties:
+        AssgnrNtty:
+          $ref: '#/components/schemas/PartyType32Code'
+        DsptId:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeIdentification1'
+        OthrAssgnrNtty:
+          $ref: '#/components/schemas/Max35Text'
+    Distance1:
+      type: object
+      properties:
+        FreeDstnc:
+          $ref: '#/components/schemas/Max10NumericText'
+        OdmtrRtr:
+          $ref: '#/components/schemas/Max10NumericText'
+        OdmtrStart:
+          $ref: '#/components/schemas/Max10NumericText'
+        Rate:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlDstnc:
+          $ref: '#/components/schemas/Max10NumericText'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure10Code'
+    DocumentReference1:
+      type: object
+      properties:
+        Ref:
+          $ref: '#/components/schemas/Max70Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    Driver2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/AdditionalData1'
+        AddtlId:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelDocument2'
+        DeptNb:
+          $ref: '#/components/schemas/Max35Text'
+        DrvgLic:
+          $ref: '#/components/schemas/DrivingLicense2'
+        DtOfBirth:
+          $ref: '#/components/schemas/ISODate'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        MplyeeId:
+          $ref: '#/components/schemas/Max70Text'
+        Mplyr:
+          $ref: '#/components/schemas/Max70Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    DriverInParty2:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Age:
+          $ref: '#/components/schemas/Max2NumericText'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        DrvgLic:
+          $ref: '#/components/schemas/DrivingLicense2'
+        DrvrCrdntl:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelDocument2'
+        DtOfBirth:
+          $ref: '#/components/schemas/ISODate'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    DrivingLicense2:
+      required:
+      - Id
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/LegalStructure1Code'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Form:
+          $ref: '#/components/schemas/PresentationMedium2Code'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        IssncDt:
+          $ref: '#/components/schemas/ISODate'
+        OthrAuthrty:
+          $ref: '#/components/schemas/Max16Text'
+        Prvc:
+          $ref: '#/components/schemas/Max16Text'
+        Stat:
+          $ref: '#/components/schemas/Max16Text'
+        Tp:
+          $ref: '#/components/schemas/Max70Text'
+        XprtnDt:
+          $ref: '#/components/schemas/ISODate'
+    ECommerceData1:
+      required:
+      - Tp
+      - Val
+      type: object
+      properties:
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max2048Text'
+    EncapsulatedContent3:
+      required:
+      - CnttTp
+      type: object
+      properties:
+        Cntt:
+          $ref: '#/components/schemas/Max100KBinary'
+        CnttTp:
+          $ref: '#/components/schemas/ContentType2Code'
+    EncryptedContent4:
+      required:
+      - CnttTp
+      - NcrptdData
+      type: object
+      properties:
+        CnttNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification24'
+        CnttTp:
+          $ref: '#/components/schemas/ContentType2Code'
+        NcrptdData:
+          $ref: '#/components/schemas/Max100KBinary'
+    EncryptedContent5:
+      required:
+      - CnttNcrptnAlgo
+      - CnttTp
+      - NcrptdDataElmt
+      type: object
+      properties:
+        CnttNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification25'
+        CnttTp:
+          $ref: '#/components/schemas/ContentType2Code'
+        NcrptdDataElmt:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/EncryptedDataElement1'
+    EncryptedData1:
+      required:
+      - NcrptdDataElmt
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Max2NumericText'
+        Ctrl:
+          $ref: '#/components/schemas/Exact1HexBinaryText'
+        DrvdInf:
+          $ref: '#/components/schemas/Max32HexBinaryText'
+        KeyIndx:
+          $ref: '#/components/schemas/Max5NumericText'
+        KeyLngth:
+          $ref: '#/components/schemas/Max4NumericText'
+        KeyPrtcn:
+          $ref: '#/components/schemas/Max2NumericText'
+        KeySetIdr:
+          $ref: '#/components/schemas/Max8NumericText'
+        NcrptdDataElmt:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/EncryptedDataElement1'
+        NcrptdDataFrmt:
+          $ref: '#/components/schemas/Max2NumericText'
+        PddgMtd:
+          $ref: '#/components/schemas/Max2NumericText'
+    EncryptedData1Choice:
+      type: object
+      properties:
+        BinryData:
+          $ref: '#/components/schemas/Max100KBinary'
+        HexBinryVal:
+          $ref: '#/components/schemas/Max9999HexBinaryText'
+    EncryptedDataElement1:
+      required:
+      - NcrptdData
+      type: object
+      properties:
+        ClearTxtDataFrmt:
+          $ref: '#/components/schemas/EncryptedDataFormat1Code'
+        Id:
+          $ref: '#/components/schemas/ExternalEncryptedElementIdentification1Code'
+        NcrptdData:
+          $ref: '#/components/schemas/EncryptedData1Choice'
+        OthrClearTxtDataFrmt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrId:
+          $ref: '#/components/schemas/Max35Text'
+    EncryptedDataFormat1Code:
+      type: string
+      enum:
+      - ASCI
+      - BINF
+      - EBCD
+      - HEXF
+      - OTHN
+      - OTHP
+    EncryptionFormat2Code:
+      type: string
+      enum:
+      - TR31
+      - TR34
+      - I238
+    EncryptionFormat3Code:
+      type: string
+      enum:
+      - TR34
+      - TR31
+      - CTCE
+      - CBCE
+    Endpoint1Code:
+      type: string
+      enum:
+      - DEST
+      - ORIG
+      - OTHP
+      - OTHN
+    EnvelopedData5:
+      required:
+      - Rcpt
+      type: object
+      properties:
+        NcrptdCntt:
+          $ref: '#/components/schemas/EncryptedContent4'
+        OrgtrInf:
+          $ref: '#/components/schemas/OriginatorInformation1'
+        Rcpt:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient6Choice'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    EnvelopedData6:
+      required:
+      - Rcpt
+      type: object
+      properties:
+        NcrptdCntt:
+          $ref: '#/components/schemas/EncryptedContent5'
+        Rcpt:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient7Choice'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    Environment17:
+      required:
+      - Acqrr
+      type: object
+      properties:
+        Accptr:
+          $ref: '#/components/schemas/PartyIdentification255'
+        Acqrr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Card:
+          $ref: '#/components/schemas/CardData6'
+        Crdhldr:
+          $ref: '#/components/schemas/Cardholder19'
+        CstmrDvc:
+          $ref: '#/components/schemas/CustomerDevice4'
+        Dstn:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Issr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Orgtr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Pyee:
+          $ref: '#/components/schemas/PartyIdentification257'
+        Pyer:
+          $ref: '#/components/schemas/PartyIdentification257'
+        Rcvr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Sndr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Termnl:
+          $ref: '#/components/schemas/Terminal4'
+        Tkn:
+          $ref: '#/components/schemas/Token2'
+        Wllt:
+          $ref: '#/components/schemas/Wallet2'
+    Environment26:
+      required:
+      - Acqrr
+      type: object
+      properties:
+        Accptr:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Acqrr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Card:
+          $ref: '#/components/schemas/CardData9'
+        Crdhldr:
+          $ref: '#/components/schemas/Cardholder19'
+        Dstn:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Issr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Orgtr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Rcvr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Sndr:
+          $ref: '#/components/schemas/PartyIdentification263'
+        Termnl:
+          $ref: '#/components/schemas/Terminal6'
+        Tkn:
+          $ref: '#/components/schemas/Token2'
+        Wllt:
+          $ref: '#/components/schemas/Wallet2'
+    ErrorDetails2:
+      required:
+      - MsgErrTp
+      type: object
+      properties:
+        DataElmtInErr:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max4000Text'
+        ErrCd:
+          $ref: '#/components/schemas/Max35Text'
+        ErrDesc:
+          $ref: '#/components/schemas/Max500Text'
+        MsgErrTp:
+          $ref: '#/components/schemas/MessageError1Code'
+        OthrMsgErrTp:
+          $ref: '#/components/schemas/Max35Text'
+    Exact12Text:
+      minLength: 12
+      maxLength: 12
+      type: string
+    Exact15Text:
+      minLength: 15
+      maxLength: 15
+      type: string
+    Exact1HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1})$
+      type: string
+    Exact1NumericText:
+      pattern: ^([0-9])$
+      type: string
+    Exact2NumericText:
+      pattern: ^([0-9]{2})$
+      type: string
+    Exact3NumericText:
+      pattern: ^([0-9]{3})$
+      type: string
+    Exact6AlphaNumericText:
+      pattern: ^([a-zA-Z0-9\s]{6})$
+      type: string
+    ExchangeRateAgreementType1Code:
+      type: string
+      enum:
+      - FWCT
+      - NORM
+      - OTHN
+      - OTHP
+      - SPOT
+    ExchangeRateDetail1:
+      type: object
+      properties:
+        AgrmtTp:
+          $ref: '#/components/schemas/ExchangeRateAgreementType1Code'
+        BaseCcyCd:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        CntrCcyCd:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        EndPt:
+          $ref: '#/components/schemas/Endpoint1Code'
+        OthrAgrmtTp:
+          $ref: '#/components/schemas/Max35Text'
+        OthrEndPt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrRateTp:
+          $ref: '#/components/schemas/Max35Text'
+        Rate:
+          $ref: '#/components/schemas/BaseOne25Rate'
+        RateTp:
+          $ref: '#/components/schemas/ExchangeRateType2Code'
+    ExchangeRateInformation2:
+      type: object
+      properties:
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        Prvdr:
+          $ref: '#/components/schemas/Max70Text'
+        RateLck:
+          $ref: '#/components/schemas/RateLock1'
+        Tm:
+          $ref: '#/components/schemas/ISOTime'
+        XchgRateDtl:
+          $ref: '#/components/schemas/ExchangeRateDetail1'
+    ExchangeRateType2Code:
+      type: string
+      enum:
+      - SELL
+      - OTHP
+      - OTHN
+      - MIDL
+      - BUYR
+      - AGRD
+    ExternalAuthenticationMethod1Code:
+      minLength: 1
+      maxLength: 4
+      type: string
+    ExternalEncryptedElementIdentification1Code:
+      pattern: ^(([0-9A-F][0-9A-F]){1,3})$
+      type: string
+    FeeAmount3:
+      required:
+      - Amt
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        ConvsDt:
+          $ref: '#/components/schemas/ISODate'
+        ConvsTm:
+          $ref: '#/components/schemas/ISOTime'
+        FctvXchgRate:
+          $ref: '#/components/schemas/BaseOne25Rate'
+    FeeCollectionInitiator1Code:
+      type: string
+      enum:
+      - ACQR
+      - AGNT
+      - CISS
+      - OTHN
+      - OTHP
+    FinancialInstitution7:
+      type: object
+      properties:
+        AddtlCtctInf:
+          $ref: '#/components/schemas/Max256Text'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        CstmrSvc:
+          $ref: '#/components/schemas/Max35Text'
+        Email:
+          $ref: '#/components/schemas/Max256Text'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        LclData:
+          $ref: '#/components/schemas/LocalData2'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        PhneNb:
+          $ref: '#/components/schemas/Max35Text'
+        URLAdr:
+          $ref: '#/components/schemas/Max256Text'
+    FleetData4:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/FleetLineItem4'
+        Summry:
+          $ref: '#/components/schemas/FleetSummary2'
+    FleetData5:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/FleetLineItem3'
+    FleetDiscountTotals1:
+      type: object
+      properties:
+        FuelAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        NonFuelAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+    FleetLineItem3:
+      required:
+      - FuelInd
+      type: object
+      properties:
+        AllwdItmInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        FleetPdctCd:
+          $ref: '#/components/schemas/Max15Text'
+        FleetPdctCtgy:
+          $ref: '#/components/schemas/Max35Text'
+        FuelInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        PdctQty:
+          $ref: '#/components/schemas/DecimalNumber'
+        SvcTp:
+          $ref: '#/components/schemas/FleetServiceType1Code'
+        TtlAmtExclgTax:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlAmtInclgTax:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure1Code'
+    FleetLineItem4:
+      required:
+      - FuelInd
+      type: object
+      properties:
+        DscntAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        FleetPdctCd:
+          $ref: '#/components/schemas/Max4Text'
+        FleetPdctCdAssgnr:
+          $ref: '#/components/schemas/Max35Text'
+        FleetPdctCtgy:
+          $ref: '#/components/schemas/Max35Text'
+        FleetPdctQlfr:
+          $ref: '#/components/schemas/Max6Text'
+        FuelBrndCd:
+          $ref: '#/components/schemas/Max4Text'
+        FuelInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        NonTaxblInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrUnitOfMeasr:
+          $ref: '#/components/schemas/Max35Text'
+        PdctQty:
+          $ref: '#/components/schemas/DecimalNumber'
+        SvcTp:
+          $ref: '#/components/schemas/FleetServiceType1Code'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TtlAmtExclgTax:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlAmtInclgTax:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure1Code'
+        UnitPric:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnitPricTaxInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    FleetPurchaseType1Code:
+      type: string
+      enum:
+      - FUEL
+      - NONF
+      - FANF
+    FleetServiceType1Code:
+      type: string
+      enum:
+      - SLSV
+      - HSDI
+      - FLSV
+    FleetSummary2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/AdditionalInformation19'
+        AgtFuelPrmptCd:
+          $ref: '#/components/schemas/Max35Text'
+        CardFuelPrmptCd:
+          $ref: '#/components/schemas/Max1Number'
+        Drvr:
+          $ref: '#/components/schemas/Driver2'
+        DrvrOrVhclCard:
+          $ref: '#/components/schemas/PlainCardData21'
+        LclAmnty:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocalAmenity1'
+        TripInf:
+          $ref: '#/components/schemas/TripInformation1'
+        TxRltdData:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentTransaction141'
+        Vhcl:
+          $ref: '#/components/schemas/Vehicle5'
+    Frequency12Code:
+      type: string
+      enum:
+      - YEAR
+      - DAIL
+      - FRTN
+      - MNTH
+      - QURT
+      - MIAN
+      - TEND
+      - WEEK
+    Frequency18Code:
+      type: string
+      enum:
+      - YEAR
+      - DAIL
+      - FRTN
+      - MNTH
+      - QURT
+      - MIAN
+      - TEND
+      - WEEK
+      - TWWK
+    FundingService2:
+      type: object
+      properties:
+        ClmInf:
+          $ref: '#/components/schemas/ClaimInformation1'
+        FndgSrc:
+          type: array
+          items:
+            $ref: '#/components/schemas/FundingSource2'
+        FndgSvc:
+          $ref: '#/components/schemas/TransferService2'
+    FundingSource2:
+      type: object
+      properties:
+        OthrSrcTp:
+          $ref: '#/components/schemas/Max35Text'
+        Ref:
+          $ref: '#/components/schemas/Max35Text'
+        SrcTp:
+          $ref: '#/components/schemas/FundingSourceType2Code'
+    FundingSourceType2Code:
+      type: string
+      enum:
+      - LOYL
+      - OTHN
+      - OTHP
+      - SVNG
+      - UVRL
+      - CASH
+      - CRDT
+      - CDBT
+      - EPRS
+      - DBAC
+      - CURR
+      - CHQE
+      - PRPD
+      - LCDT
+    GenericIdentification183:
+      required:
+      - Id
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/PartyType18Code'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/PartyType17Code'
+    GenericIdentification48:
+      required:
+      - Id
+      - Issr
+      - Vrsn
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        Issr:
+          $ref: '#/components/schemas/Max35Text'
+        Vrsn:
+          $ref: '#/components/schemas/Max35Text'
+    GenericInformation1:
+      required:
+      - Nm
+      type: object
+      properties:
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        Val:
+          $ref: '#/components/schemas/Max140Text'
+    GeographicPointInDecimalDegrees:
+      maxLength: 27
+      pattern: ^((\+|-)?[\d]{1,3}(\.[\d]{1,8})?/(\+|-)?[\d]{1,3}(\.[\d]{1,8})?)$
+      type: string
+    GoodAndServiceDeliveryChannel1Code:
+      type: string
+      enum:
+      - EDEL
+      - PULC
+      - NDEL
+      - OTHN
+      - OTHP
+      - SCBA
+      - SCSA
+    GoodAndServiceDeliverySchedule1Code:
+      type: string
+      enum:
+      - OTHN
+      - OTHP
+      - ONDL
+      - SDDL
+      - TDDL
+    GoodsAndServices1Code:
+      type: string
+      enum:
+      - ELEC
+      - PHYS
+      - ELPH
+    GoodsAndServicesSubType1Code:
+      type: string
+      enum:
+      - CRCU
+      - FORX
+      - OTHN
+      - OTHP
+      - SECS
+    GracePeriod2:
+      type: object
+      properties:
+        CstmrSelctdGracePrd:
+          type: boolean
+        OthrUnitTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tm:
+          $ref: '#/components/schemas/Max3NumericText'
+        UnitTp:
+          $ref: '#/components/schemas/GracePeriodUnitType1Code'
+    GracePeriodUnitType1Code:
+      type: string
+      enum:
+      - WEKS
+      - PMTS
+      - OTHP
+      - OTHN
+      - MNTH
+      - DAYS
+    Header62:
+      required:
+      - CreDtTm
+      - InitgPty
+      - MsgFctn
+      - PrtcolVrsn
+      type: object
+      properties:
+        BtchMgmtInf:
+          $ref: '#/components/schemas/BatchManagementInformation1'
+        CreDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        InitgPty:
+          $ref: '#/components/schemas/GenericIdentification183'
+        MsgFctn:
+          $ref: '#/components/schemas/MessageFunction16Code'
+        PrtcolVrsn:
+          $ref: '#/components/schemas/Max2048Text'
+        RcptPty:
+          $ref: '#/components/schemas/GenericIdentification183'
+        ReTrnsmssnCntr:
+          $ref: '#/components/schemas/Max3NumericText'
+        TracData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Tracblt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Traceability9'
+        XchgId:
+          $ref: '#/components/schemas/Max35Text'
+    HiredVehicle2:
+      type: object
+      properties:
+        CpnyNm:
+          $ref: '#/components/schemas/Max70Text'
+        CpnyTp:
+          $ref: '#/components/schemas/Max35Text'
+        DrvrId:
+          $ref: '#/components/schemas/Max35Text'
+        DrvrTaxId:
+          $ref: '#/components/schemas/Max35Text'
+        Dstn:
+          $ref: '#/components/schemas/Destination3'
+        TpOfVhcl:
+          $ref: '#/components/schemas/Max35Text'
+        VhclId:
+          $ref: '#/components/schemas/Max35Text'
+    ICCFallbackReason1Code:
+      type: string
+      enum:
+      - CIIA
+      - EDIP
+      - OTHN
+      - OTHP
+      - TERI
+    ISO18245MerchantCategoryCode:
+      pattern: ^([0-9]{4,4})$
+      type: string
+    ISO2ALanguageCode:
+      pattern: ^([a-z]{2,2})$
+      type: string
+    ISO3NumericCountryCode:
+      pattern: ^([0-9]{3,3})$
+      type: string
+    ISO3NumericCurrencyCode:
+      pattern: ^([0-9]{3,3})$
+      type: string
+    ISO8583AccountTypeCode:
+      pattern: ^([0-9A-Z]{2,2})$
+      type: string
+    ISO8583AmountTypeCode:
+      pattern: ^([0-9A-Z]{2,2})$
+      type: string
+    ISO8583MessageReasonCode:
+      pattern: ^([0-9]{4,4})$
+      type: string
+    ISO8583ResponseCode:
+      pattern: ^([0-9A-Z]{2,2})$
+      type: string
+    ISO8583TransactionTypeCode:
+      pattern: ^([0-9A-Z]{2,2})$
+      type: string
+    ISOCountrySubDivisionCode:
+      pattern: ^([A-Z]{2,3})$
+      type: string
+    ISODate:
+      type: string
+    ISODateTime:
+      type: string
+    ISOMax3ACountryCode:
+      pattern: ^([A-Z]{2,3})$
+      type: string
+    ISOMax3ALanguageCode:
+      pattern: ^([a-z]{2,3})$
+      type: string
+    ISOTime:
+      type: string
+    ISOYearMonth:
+      type: string
+    Identification3Code:
+      type: string
+      enum:
+      - DRID
+      - NTID
+      - PASS
+      - SSYN
+      - ARNB
+      - OTHP
+      - OTHN
+      - EMAL
+      - PHNB
+      - CUID
+      - TXID
+      - PRXY
+    ImpliedCurrencyAndAmount:
+      minimum: 0
+      type: number
+    Instalment4:
+      type: object
+      properties:
+        Plan:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plan2'
+        PmtSeqNb:
+          $ref: '#/components/schemas/Number'
+    InstalmentAmountDetails2:
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/Amount16'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Pctg:
+          $ref: '#/components/schemas/PercentageRate'
+        SubTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/InstalmentAmountDetailsType2Code'
+    InstalmentAmountDetailsType2Code:
+      type: string
+      enum:
+      - AFCO
+      - EXPN
+      - FEES
+      - FUNA
+      - INSU
+      - INTR
+      - OTHC
+      - OTHN
+      - OTHP
+      - PRNC
+      - RQST
+      - TAXX
+    InstalmentPeriod1Code:
+      type: string
+      enum:
+      - MNTH
+      - ANNU
+    InterestRate1Code:
+      type: string
+      enum:
+      - GSRT
+      - NTRT
+      - OTHN
+      - OTHP
+    InterestRateDetails2:
+      required:
+      - Rate
+      type: object
+      properties:
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Prd:
+          $ref: '#/components/schemas/InstalmentPeriod1Code'
+        Rate:
+          $ref: '#/components/schemas/BaseOneRate'
+        Tp:
+          $ref: '#/components/schemas/InterestRate1Code'
+    Invoice2:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem2'
+        Summry:
+          $ref: '#/components/schemas/InvoiceSummary2'
+    InvoiceLineItem2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Adjstmnt:
+          $ref: '#/components/schemas/Adjustment12'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        CtrctNb:
+          $ref: '#/components/schemas/Max70Text'
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        MdclSvcsInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OrdrDt:
+          $ref: '#/components/schemas/ISODate'
+        OthrUnitOfMeasr:
+          $ref: '#/components/schemas/Max35Text'
+        PdctCd:
+          $ref: '#/components/schemas/Max70Text'
+        PdctQlfr:
+          $ref: '#/components/schemas/Max35Text'
+        PdctQty:
+          $ref: '#/components/schemas/DecimalNumber'
+        RbllgInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ShipToIndstryCd:
+          $ref: '#/components/schemas/Max50Text'
+        ShppgDt:
+          $ref: '#/components/schemas/ISODate'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TpOfSpply:
+          $ref: '#/components/schemas/Max10Text'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure1Code'
+        UnitPric:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnqVATInvcRef:
+          $ref: '#/components/schemas/Max35Text'
+        ZeroCostToCstmrInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    InvoiceSummary2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Buyr:
+          $ref: '#/components/schemas/PartyIdentification259'
+        FrghtAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InvcCreDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        InvcDt:
+          $ref: '#/components/schemas/ISODate'
+        InvcNb:
+          $ref: '#/components/schemas/Max70Text'
+        Sellr:
+          $ref: '#/components/schemas/PartyIdentification259'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        TaxRclmMtd:
+          $ref: '#/components/schemas/TaxReclaimMethod1Code'
+        TaxTtl:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    IssuerAndSerialNumber1:
+      required:
+      - Issr
+      - SrlNb
+      type: object
+      properties:
+        Issr:
+          $ref: '#/components/schemas/CertificateIssuer1'
+        SrlNb:
+          $ref: '#/components/schemas/Max35Binary'
+    JourneyInformation1:
+      type: object
+      properties:
+        DtAndTm:
+          $ref: '#/components/schemas/ISODateTime'
+        JrnyData:
+          $ref: '#/components/schemas/Max35Text'
+        JrnyTp:
+          $ref: '#/components/schemas/JourneyType1Code'
+    JourneyType1Code:
+      type: string
+      enum:
+      - COAC
+      - EARL
+      - FLGT
+      - LATE
+      - ONTM
+      - OTHR
+      - TRAN
+      - VESS
+    Jurisdiction2:
+      type: object
+      properties:
+        DmstInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DmstQlfctn:
+          $ref: '#/components/schemas/Max35Text'
+    KEK5:
+      required:
+      - KEKId
+      - KeyNcrptnAlgo
+      - NcrptdKey
+      type: object
+      properties:
+        KEKId:
+          $ref: '#/components/schemas/KEKIdentifier2'
+        KeyNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification23'
+        NcrptdKey:
+          $ref: '#/components/schemas/Max500Binary'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    KEK6:
+      required:
+      - KEKId
+      - KeyNcrptnAlgo
+      type: object
+      properties:
+        KEKId:
+          $ref: '#/components/schemas/KEKIdentifier6'
+        KeyNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification28'
+        NcrptdKey:
+          $ref: '#/components/schemas/Max500Binary'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    KEKIdentifier2:
+      required:
+      - KeyId
+      - KeyVrsn
+      type: object
+      properties:
+        DerivtnId:
+          $ref: '#/components/schemas/Min5Max16Binary'
+        KeyId:
+          $ref: '#/components/schemas/Max140Text'
+        KeyVrsn:
+          $ref: '#/components/schemas/Max140Text'
+        SeqNb:
+          $ref: '#/components/schemas/Number'
+    KEKIdentifier6:
+      required:
+      - KeyId
+      type: object
+      properties:
+        DerivtnId:
+          $ref: '#/components/schemas/Min5Max16Binary'
+        KeyId:
+          $ref: '#/components/schemas/Max140Text'
+        KeyVrsn:
+          $ref: '#/components/schemas/Max140Text'
+        SeqNb:
+          $ref: '#/components/schemas/Number'
+    KeyTransport5:
+      required:
+      - KeyNcrptnAlgo
+      - NcrptdKey
+      - RcptId
+      type: object
+      properties:
+        KeyNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification19'
+        NcrptdKey:
+          $ref: '#/components/schemas/Max5000Binary'
+        RcptId:
+          $ref: '#/components/schemas/Recipient5Choice'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    KeyTransport6:
+      required:
+      - KeyNcrptnAlgo
+      - NcrptdKey
+      - RcptId
+      type: object
+      properties:
+        KeyNcrptnAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification27'
+        NcrptdKey:
+          $ref: '#/components/schemas/Max5000Binary'
+        RcptId:
+          $ref: '#/components/schemas/Recipient5Choice'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    KeyUsage1Code:
+      type: string
+      enum:
+      - ENCR
+      - DCPT
+      - DENC
+      - DDEC
+      - TRNI
+      - TRNX
+      - MACG
+      - MACV
+      - SIGG
+      - SUGV
+      - PINE
+      - PIND
+      - PINV
+      - KEYG
+      - KEYI
+      - KEYX
+      - KEYD
+    LanguageCode:
+      type: string
+    LegalStructure1Code:
+      type: string
+      enum:
+      - STAE
+      - PVIN
+      - MUNI
+      - CNTY
+      - NATI
+    LifeCycleSupport1Code:
+      type: string
+      enum:
+      - AUTH
+      - FINC
+    LocalAmenity1:
+      required:
+      - Tp
+      type: object
+      properties:
+        AvlblInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/LocationAmenity1Code'
+    LocalData1:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max210Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max70Text'
+    LocalData2:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlCtctInf:
+          $ref: '#/components/schemas/Max512Text'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address3'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    LocalData3:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address3'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        Nm:
+          $ref: '#/components/schemas/CardholderName2'
+    LocalData4:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlAdrInf:
+          $ref: '#/components/schemas/Max512Text'
+        AddtlCtctInf:
+          $ref: '#/components/schemas/Max512Text'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address3'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max210Text'
+        NmAndLctn:
+          $ref: '#/components/schemas/Max200Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max70Text'
+    LocalData5:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlAdrInf:
+          $ref: '#/components/schemas/Max512Text'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address3'
+        CmonNm:
+          $ref: '#/components/schemas/Max280Text'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max210Text'
+    LocalData7:
+      required:
+      - Lang
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address3'
+        CrdhldrNm:
+          $ref: '#/components/schemas/CardholderName2'
+        Lang:
+          $ref: '#/components/schemas/ISOMax3ALanguageCode'
+    Location4:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        LclCcy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        LclTmZone:
+          $ref: '#/components/schemas/Max70Text'
+        LctnCd:
+          $ref: '#/components/schemas/Max35Text'
+        LctnNm:
+          $ref: '#/components/schemas/Max35Text'
+    LocationAmenity1Code:
+      type: string
+      enum:
+      - AADA
+      - AFLA
+      - AVLA
+      - CRWA
+      - CVSA
+      - DISA
+      - EWAA
+      - MRLA
+      - OTHN
+      - OTHP
+      - PAPA
+      - TSHA
+      - TSRA
+      - TSSA
+      - TFHA
+      - VSWA
+      - VHPA
+      - VMRA
+    Lodging3:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/LodgingLineItem2'
+        Summry:
+          $ref: '#/components/schemas/LodgingSummary2'
+    LodgingActivity1Code:
+      type: string
+      enum:
+      - APTM
+      - BEBR
+      - COTT
+      - CRUI
+      - HOME
+      - HOST
+      - HOTL
+      - LODG
+      - MOTL
+      - OTHN
+      - OTHP
+      - RESO
+      - ROAB
+      - TOSH
+    LodgingLineItem2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        PstChckOutInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SubTtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        Tm:
+          $ref: '#/components/schemas/ISOTime'
+        Tp:
+          $ref: '#/components/schemas/LodgingService1Code'
+        UnitAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+    LodgingProperty2:
+      required:
+      - Id
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/CompanyAssigner2Code'
+        Ctct:
+          $ref: '#/components/schemas/Contact3'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        FireSftyActInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Lctn:
+          $ref: '#/components/schemas/Location4'
+        Nm:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        PrstgsPrprty:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/LodgingActivity1Code'
+    LodgingRoom1:
+      type: object
+      properties:
+        AdltsInRoom:
+          $ref: '#/components/schemas/Max3NumericText'
+        BedTp:
+          $ref: '#/components/schemas/Max70Text'
+        ChldrnInRoom:
+          $ref: '#/components/schemas/Max3NumericText'
+        DalyRoomRate:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        GstsPerRoom:
+          $ref: '#/components/schemas/Max3NumericText'
+        RoomLctn:
+          $ref: '#/components/schemas/Max35Text'
+        RoomTp:
+          $ref: '#/components/schemas/Max35Text'
+    LodgingService1Code:
+      type: string
+      enum:
+      - ACCO
+      - AUDI
+      - BANQ
+      - BREK
+      - BUSS
+      - CONC
+      - EARA
+      - EARD
+      - ENTR
+      - FCAA
+      - GAME
+      - GARA
+      - GIFT
+      - HEAL
+      - INTE
+      - LAUN
+      - LONG
+      - MINI
+      - NOSH
+      - OTHR
+      - PARK
+      - PHON
+      - REST
+      - RMSE
+      - SPAS
+      - THRD
+      - TRAN
+      - VODS
+    LodgingSummary2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Arrvl:
+          $ref: '#/components/schemas/DepartureOrArrival2'
+        AuthrsdAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorisedAmount1'
+        Cstmr:
+          $ref: '#/components/schemas/Customer8'
+        Dprture:
+          $ref: '#/components/schemas/DepartureOrArrival1'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        FolioNb:
+          $ref: '#/components/schemas/Max35Text'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        LltyPrgrmm:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoyaltyProgramme2'
+        NbOfRooms:
+          $ref: '#/components/schemas/Max4NumericText'
+        NoShowInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Prprty:
+          $ref: '#/components/schemas/LodgingProperty2'
+        Room:
+          type: array
+          items:
+            $ref: '#/components/schemas/LodgingRoom1'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlTax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    LoyaltyMember2:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Bal:
+          $ref: '#/components/schemas/Max10NumericText'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        LltyVal:
+          $ref: '#/components/schemas/Max10NumericText'
+        LltyValTp:
+          $ref: '#/components/schemas/LoyaltyValueType1Code'
+        MmbSts:
+          $ref: '#/components/schemas/Max35Text'
+        Nm:
+          $ref: '#/components/schemas/CardholderName3'
+        OthrLltyValTp:
+          $ref: '#/components/schemas/Max35Text'
+        ValToCdt:
+          $ref: '#/components/schemas/Max10NumericText'
+        ValToDbt:
+          $ref: '#/components/schemas/Max10NumericText'
+        XprtnDt:
+          $ref: '#/components/schemas/ISODate'
+    LoyaltyProgramme2:
+      type: object
+      properties:
+        PrgmId:
+          $ref: '#/components/schemas/Max70Text'
+        PrgrmmTp:
+          $ref: '#/components/schemas/Max35Text'
+        PtcptId:
+          $ref: '#/components/schemas/Max70Text'
+    LoyaltyProgramme3:
+      type: object
+      properties:
+        LltyMmb:
+          $ref: '#/components/schemas/LoyaltyMember2'
+        PrgrmmElgbltyInd:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrueFalseIndicator'
+        PrgrmmIssr:
+          $ref: '#/components/schemas/Max35Text'
+    LoyaltyValueType1Code:
+      type: string
+      enum:
+      - MILE
+      - MONE
+      - OTHR
+      - POIN
+      - PRIV
+    MACData1:
+      required:
+      - Algo
+      - Ctrl
+      - KeySetIdr
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Max2NumericText'
+        Ctrl:
+          $ref: '#/components/schemas/Exact1HexBinaryText'
+        DrvdInf:
+          $ref: '#/components/schemas/Max32HexBinaryText'
+        InitlstnVctr:
+          $ref: '#/components/schemas/Max32HexBinaryText'
+        KeyIndx:
+          $ref: '#/components/schemas/Max5NumericText'
+        KeyLngth:
+          $ref: '#/components/schemas/Max4NumericText'
+        KeyPrtcn:
+          $ref: '#/components/schemas/Max2NumericText'
+        KeySetIdr:
+          $ref: '#/components/schemas/Max8NumericText'
+        PddgMtd:
+          $ref: '#/components/schemas/Max2NumericText'
+    MOTO1Code:
+      type: string
+      enum:
+      - MAOR
+      - MOTO
+      - TPOR
+    Max1000Text:
+      minLength: 1
+      maxLength: 1000
+      type: string
+    Max100KBinary:
+      minLength: 1
+      maxLength: 102400
+      type: string
+    Max104Text:
+      minLength: 1
+      maxLength: 104
+      type: string
+    Max10KHexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,10000}  )$
+      type: string
+    Max10KText:
+      minLength: 1
+      maxLength: 10000
+      type: string
+    Max10NumberFraction2:
+      type: number
+    Max10NumericText:
+      pattern: ^([0-9]{1,10})$
+      type: string
+    Max10PositiveNumber:
+      minimum: 1
+      type: number
+    Max10Text:
+      minLength: 1
+      maxLength: 10
+      type: string
+    Max11NumericText:
+      pattern: ^([0-9]{1,11})$
+      type: string
+    Max12NumericText:
+      pattern: ^([0-9]{1,12})$
+      type: string
+    Max140Binary:
+      minLength: 1
+      maxLength: 140
+      type: string
+    Max140Text:
+      minLength: 1
+      maxLength: 140
+      type: string
+    Max15NumericText:
+      pattern: ^([0-9]{1,15})$
+      type: string
+    Max15Text:
+      minLength: 1
+      maxLength: 15
+      type: string
+    Max16HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,16})$
+      type: string
+    Max16Text:
+      minLength: 1
+      maxLength: 16
+      type: string
+    Max19HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,19})$
+      type: string
+    Max19NumericText:
+      pattern: ^([0-9]{1,19})$
+      type: string
+    Max1Number:
+      type: number
+    Max200Text:
+      minLength: 1
+      maxLength: 200
+      type: string
+    Max2048Text:
+      minLength: 1
+      maxLength: 2048
+      type: string
+    Max20KText:
+      minLength: 1
+      maxLength: 20000
+      type: string
+    Max20Text:
+      minLength: 1
+      maxLength: 20
+      type: string
+    Max210Text:
+      minLength: 1
+      maxLength: 210
+      type: string
+    Max23NumericText:
+      pattern: ^([0-9]{1,23})$
+      type: string
+    Max256Text:
+      minLength: 1
+      maxLength: 256
+      type: string
+    Max280Text:
+      minLength: 1
+      maxLength: 280
+      type: string
+    Max2NumericText:
+      pattern: ^([0-9]{1,2})$
+      type: string
+    Max3000Binary:
+      minLength: 1
+      maxLength: 3000
+      type: string
+    Max32HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,32})$
+      type: string
+    Max350Text:
+      minLength: 1
+      maxLength: 350
+      type: string
+    Max35Binary:
+      minLength: 1
+      maxLength: 35
+      type: string
+    Max35NumericText:
+      pattern: ^([0-9]{1,35})$
+      type: string
+    Max35Text:
+      minLength: 1
+      maxLength: 35
+      type: string
+    Max37Text:
+      minLength: 1
+      maxLength: 37
+      type: string
+    Max3NumericText:
+      pattern: ^([0-9]{1,3})$
+      type: string
+    Max4000Text:
+      minLength: 1
+      maxLength: 4000
+      type: string
+    Max40Text:
+      minLength: 1
+      maxLength: 40
+      type: string
+    Max4NumericText:
+      pattern: ^([0-9]{1,4})$
+      type: string
+    Max4Text:
+      minLength: 1
+      maxLength: 4
+      type: string
+    Max5000Binary:
+      minLength: 1
+      maxLength: 5000
+      type: string
+    Max500Binary:
+      minLength: 1
+      maxLength: 500
+      type: string
+    Max500Text:
+      minLength: 1
+      maxLength: 500
+      type: string
+    Max50Text:
+      minLength: 1
+      maxLength: 50
+      type: string
+    Max512Text:
+      minLength: 1
+      maxLength: 512
+      type: string
+    Max5NumericText:
+      pattern: ^([0-9]{1,5})$
+      type: string
+    Max5PositiveNumber:
+      minimum: 1
+      type: number
+    Max6NumberFraction2:
+      type: number
+    Max6NumericText:
+      pattern: ^([0-9]{1,6})$
+      type: string
+    Max6Text:
+      minLength: 1
+      maxLength: 6
+      type: string
+    Max70Text:
+      minLength: 1
+      maxLength: 70
+      type: string
+    Max76Text:
+      minLength: 1
+      maxLength: 76
+      type: string
+    Max8HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,8})$
+      type: string
+    Max8NumericText:
+      pattern: ^([0-9]{1,8})$
+      type: string
+    Max9999HexBinaryText:
+      pattern: ^(([0-9A-F][0-9A-F]){1,9999})$
+      type: string
+    Max99Text:
+      minLength: 1
+      maxLength: 99
+      type: string
+    MemoryCharacteristics1:
+      required:
+      - FreeSz
+      - Id
+      - TtlSz
+      - Unit
+      type: object
+      properties:
+        FreeSz:
+          $ref: '#/components/schemas/DecimalNumber'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        TtlSz:
+          $ref: '#/components/schemas/DecimalNumber'
+        Unit:
+          $ref: '#/components/schemas/MemoryUnit1Code'
+    MemoryUnit1Code:
+      type: string
+      enum:
+      - BYTE
+      - EXAB
+      - GIGA
+      - KILO
+      - MEGA
+      - PETA
+      - TERA
+    MessageClass1Code:
+      type: string
+      enum:
+      - ADDE
+      - AMDT
+      - AUTH
+      - CMGT
+      - CBCK
+      - FEEC
+      - FINL
+      - INQY
+      - VERI
+    MessageError1Code:
+      type: string
+      enum:
+      - IDEF
+      - IDEL
+      - IDEV
+      - INME
+      - INMF
+      - MEPE
+      - OTHP
+      - PRVE
+      - RDEM
+      - SECU
+      - UDFD
+      - OTHN
+      - ITDE
+      - DUME
+      - IDWM
+      - IDRM
+      - IBAT
+      - ICOL
+    MessageFunction16Code:
+      type: string
+      enum:
+      - ADVC
+      - NOTI
+      - CAAD
+      - CANO
+      - REQU
+    Min2Max3NumericText:
+      pattern: ^([0-9]{2,3})$
+      type: string
+    Min5Max16Binary:
+      minLength: 5
+      maxLength: 16
+      type: string
+    Number:
+      type: number
+    OfficialDocumentType1Code:
+      type: string
+      enum:
+      - ARNU
+      - AUTH
+      - DIPL
+      - DVLC
+      - EURO
+      - IDEN
+      - INTE
+      - INPO
+      - LZPR
+      - OTHN
+      - OTHP
+      - PASS
+      - VISA
+      - PERM
+      - REFU
+    OnBoardDiagnostics1:
+      type: object
+      properties:
+        BttryVltg:
+          $ref: '#/components/schemas/Max4NumericText'
+        ChckNgnWrngSts:
+          $ref: '#/components/schemas/Max35Text'
+        CoolntTmprtr:
+          $ref: '#/components/schemas/Max6NumberFraction2'
+        FuelEcnmy:
+          $ref: '#/components/schemas/Max6NumberFraction2'
+        FuelGaugeLvl:
+          $ref: '#/components/schemas/Max4NumericText'
+        FuelTankLvlStart:
+          $ref: '#/components/schemas/Max4NumericText'
+        HardAcclrtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        HardBrakg:
+          $ref: '#/components/schemas/Max4NumericText'
+        NgnHrs:
+          $ref: '#/components/schemas/Max10NumberFraction2'
+        NgnIdleTm:
+          $ref: '#/components/schemas/Max10NumberFraction2'
+        NgnLd:
+          $ref: '#/components/schemas/Max12NumericText'
+        NgnOilLifeRmng:
+          $ref: '#/components/schemas/Max3NumericText'
+        NgnOilPrssr:
+          $ref: '#/components/schemas/Max3NumericText'
+        NgnOilTmprtr:
+          $ref: '#/components/schemas/Max6NumberFraction2'
+        NgnRPM:
+          $ref: '#/components/schemas/Max5NumericText'
+        NgnTtlIdleTm:
+          $ref: '#/components/schemas/Max10NumberFraction2'
+        NgnTtlTm:
+          $ref: '#/components/schemas/Max6NumberFraction2'
+        RfrgrtnHrs:
+          $ref: '#/components/schemas/Max10NumberFraction2'
+        RfrgrtnTmprtr:
+          $ref: '#/components/schemas/Max6NumberFraction2'
+    OnLineCapability2Code:
+      type: string
+      enum:
+      - OFLN
+      - ONLN
+      - BOTH
+    OriginalDataElements2:
+      type: object
+      properties:
+        AcqrrId:
+          $ref: '#/components/schemas/Max11NumericText'
+        AcqrrRefData:
+          $ref: '#/components/schemas/Max140Text'
+        AcqrrRefNb:
+          $ref: '#/components/schemas/Max23NumericText'
+        CardIssrRefData:
+          $ref: '#/components/schemas/Max1000Text'
+        LclDt:
+          $ref: '#/components/schemas/ISODate'
+        LclTm:
+          $ref: '#/components/schemas/ISOTime'
+        LifeCyclSpprt:
+          $ref: '#/components/schemas/LifeCycleSupport1Code'
+        LifeCyclTracIdData:
+          $ref: '#/components/schemas/TransactionLifeCycleIdentification1'
+        LifeCyclTracIdMssng:
+          $ref: '#/components/schemas/Max70Text'
+        MsgClss:
+          $ref: '#/components/schemas/MessageClass1Code'
+        MsgFctn:
+          $ref: '#/components/schemas/MessageFunction16Code'
+        RtrvlRefNb:
+          $ref: '#/components/schemas/Exact12Text'
+        SndrId:
+          $ref: '#/components/schemas/Max11NumericText'
+        SysTracAudtNb:
+          $ref: '#/components/schemas/Max12NumericText'
+        TmZone:
+          $ref: '#/components/schemas/Max70Text'
+        TrnsmssnDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        TxRef:
+          $ref: '#/components/schemas/Max35Text'
+        TxTp:
+          $ref: '#/components/schemas/ISO8583TransactionTypeCode'
+    OriginalTransactionAmount2:
+      required:
+      - TxAmt
+      type: object
+      properties:
+        AmtQlfr:
+          $ref: '#/components/schemas/TypeOfAmount22Code'
+        CrdhldrBllgAmt:
+          $ref: '#/components/schemas/Amount15'
+        RcncltnAmt:
+          $ref: '#/components/schemas/Amount15'
+        TxAmt:
+          $ref: '#/components/schemas/TransactionAmount1'
+    OriginatorInformation1:
+      type: object
+      properties:
+        Cert:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max5000Binary'
+    OutputFormat1Code:
+      type: string
+      enum:
+      - MREF
+      - TEXT
+      - HTML
+    OutputFormat4Code:
+      type: string
+      enum:
+      - FLNM
+      - MREF
+      - OTHN
+      - OTHP
+      - SMSI
+      - TEXT
+      - URLI
+      - HTML
+    PINData1:
+      required:
+      - NcrptdPINBlck
+      - PINBlckFrmt
+      type: object
+      properties:
+        Algo:
+          $ref: '#/components/schemas/Max2NumericText'
+        Ctrl:
+          $ref: '#/components/schemas/Exact1HexBinaryText'
+        DrvdInf:
+          $ref: '#/components/schemas/Max32HexBinaryText'
+        KeyIndx:
+          $ref: '#/components/schemas/Max5NumericText'
+        KeyLngth:
+          $ref: '#/components/schemas/Max4NumericText'
+        KeyPrtcn:
+          $ref: '#/components/schemas/Max2NumericText'
+        KeySetIdr:
+          $ref: '#/components/schemas/Max8NumericText'
+        NcrptdPINBlck:
+          $ref: '#/components/schemas/Max16HexBinaryText'
+        PINBlckFrmt:
+          $ref: '#/components/schemas/Max2NumericText'
+    PINEntrySecurityCharacteristic1Code:
+      type: string
+      enum:
+      - OTHN
+      - OTHP
+      - SECS
+      - SECH
+    POICommunicationType2Code:
+      type: string
+      enum:
+      - BLTH
+      - ETHR
+      - GPRS
+      - GSMF
+      - PSTN
+      - RS23
+      - USBD
+      - USBH
+      - WIFI
+      - WT2G
+      - WT3G
+      - WT4G
+      - WT5G
+    POIComponentStatus1Code:
+      type: string
+      enum:
+      - WAIT
+      - OUTD
+      - OPER
+      - DACT
+    POIComponentType5Code:
+      type: string
+      enum:
+      - AQPP
+      - APPR
+      - TLPR
+      - SCPR
+      - SERV
+      - TERM
+      - DVCE
+      - SECM
+      - APLI
+      - EMVK
+      - EMVO
+      - MDWR
+      - DRVR
+      - OPST
+      - MRPR
+      - CRTF
+      - TMSP
+      - SACP
+      - SAPR
+    Parameter10:
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/Algorithm16Code'
+        MskGnrtrAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification18'
+        NcrptnFrmt:
+          $ref: '#/components/schemas/EncryptionFormat2Code'
+    Parameter11:
+      required:
+      - DgstAlgo
+      - MskGnrtrAlgo
+      - SaltLngth
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/Algorithm16Code'
+        MskGnrtrAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification12'
+        SaltLngth:
+          $ref: '#/components/schemas/Number'
+        TrlrFld:
+          $ref: '#/components/schemas/Number'
+    Parameter12:
+      type: object
+      properties:
+        BPddg:
+          $ref: '#/components/schemas/BytePadding1Code'
+        InitlstnVctr:
+          $ref: '#/components/schemas/Max500Binary'
+        NcrptnFrmt:
+          $ref: '#/components/schemas/EncryptionFormat2Code'
+    Parameter13:
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/Algorithm20Code'
+        MskGnrtrAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification26'
+    Parameter14:
+      type: object
+      properties:
+        BPddg:
+          $ref: '#/components/schemas/BytePadding1Code'
+        InitlstnVctr:
+          $ref: '#/components/schemas/Max500Binary'
+        NcrptnFrmt:
+          $ref: '#/components/schemas/EncryptionFormat3Code'
+    Parameter5:
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/Algorithm11Code'
+    Parameter7:
+      type: object
+      properties:
+        BPddg:
+          $ref: '#/components/schemas/BytePadding1Code'
+        InitlstnVctr:
+          $ref: '#/components/schemas/Max500Binary'
+    Parameter9:
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/Algorithm16Code'
+    PartyIdentification200:
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/PartyType18Code'
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/PartyType28Code'
+    PartyIdentification208:
+      required:
+      - Id
+      - Tp
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max4Text'
+    PartyIdentification210:
+      type: object
+      properties:
+        MplyeeId:
+          $ref: '#/components/schemas/PhoneNumber'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        PrfssnlLvl:
+          $ref: '#/components/schemas/Max35Text'
+        PrsnlId:
+          $ref: '#/components/schemas/Max35Text'
+    PartyIdentification255:
+      required:
+      - Id
+      - NmAndLctn
+      type: object
+      properties:
+        AddtlAdrInf:
+          $ref: '#/components/schemas/Max256Text'
+        AddtlCtctInf:
+          $ref: '#/components/schemas/Max256Text'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AddtlId:
+          $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        CstmrSvc:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        Email:
+          $ref: '#/components/schemas/Max256Text'
+        GeogcLctn:
+          $ref: '#/components/schemas/GeographicPointInDecimalDegrees'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        LclData:
+          $ref: '#/components/schemas/LocalData4'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max99Text'
+        NmAndLctn:
+          $ref: '#/components/schemas/Max99Text'
+        PhneNb:
+          $ref: '#/components/schemas/Max35Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+        SpnsrdMrchnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/SponsoredMerchant2'
+        TaxRegnId:
+          $ref: '#/components/schemas/Max35Text'
+        URLAdr:
+          $ref: '#/components/schemas/Max256Text'
+    PartyIdentification257:
+      type: object
+      properties:
+        Cstmr:
+          $ref: '#/components/schemas/Customer7'
+        FI:
+          $ref: '#/components/schemas/FinancialInstitution7'
+    PartyIdentification258:
+      required:
+      - Id
+      type: object
+      properties:
+        AddtlId:
+          $ref: '#/components/schemas/AdditionalData1'
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        LclData:
+          $ref: '#/components/schemas/LocalData1'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max99Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+    PartyIdentification259:
+      type: object
+      properties:
+        AddtlInf:
+          $ref: '#/components/schemas/Max1000Text'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Ctct:
+          $ref: '#/components/schemas/Contact3'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        TaxRegnId:
+          $ref: '#/components/schemas/Max70Text'
+    PartyIdentification260:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Instrs:
+          $ref: '#/components/schemas/Max350Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+    PartyIdentification261:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Cd:
+          $ref: '#/components/schemas/Max35Text'
+        Ctct:
+          $ref: '#/components/schemas/Contact6'
+        IATACd:
+          $ref: '#/components/schemas/Max35Text'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+    PartyIdentification262:
+      required:
+      - Id
+      type: object
+      properties:
+        AddtlId:
+          $ref: '#/components/schemas/Max35Text'
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        FrgnMrchnt:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        LclData:
+          $ref: '#/components/schemas/LocalData1'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+    PartyIdentification263:
+      required:
+      - Id
+      type: object
+      properties:
+        AddtlId:
+          $ref: '#/components/schemas/AdditionalData1'
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISO3NumericCountryCode'
+        Id:
+          $ref: '#/components/schemas/Max11NumericText'
+        LclData:
+          $ref: '#/components/schemas/LocalData1'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max99Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+    PartyType17Code:
+      type: string
+      enum:
+      - OTHN
+      - OTHP
+      - ACQR
+      - ACQP
+      - CISS
+      - CISP
+      - AGNT
+    PartyType18Code:
+      type: string
+      enum:
+      - ACQR
+      - CISS
+      - CSCH
+      - AGNT
+    PartyType20Code:
+      type: string
+      enum:
+      - ACCP
+      - ACQR
+      - CRDH
+      - CISS
+      - AGNT
+    PartyType21Code:
+      type: string
+      enum:
+      - ACCP
+      - CRDH
+      - OTHN
+      - OTHP
+    PartyType22Code:
+      type: string
+      enum:
+      - CRDH
+      - MERC
+      - OTHN
+      - OTHP
+      - AGNT
+    PartyType26Code:
+      type: string
+      enum:
+      - ACCP
+      - ACQR
+      - ICCA
+      - CISS
+      - DLIS
+      - AGNT
+      - OTHN
+      - OTHP
+    PartyType28Code:
+      type: string
+      enum:
+      - ACCP
+      - ACQR
+      - AGNT
+      - OTHN
+      - OTHP
+      - WLPR
+      - ISUR
+    PartyType32Code:
+      type: string
+      enum:
+      - ACQR
+      - AGNT
+      - ISUR
+      - OTHN
+      - OTHP
+    PartyType7Code:
+      type: string
+      enum:
+      - ACQR
+      - ITAG
+      - PCPT
+      - TMGT
+      - SALE
+    PartyType9Code:
+      type: string
+      enum:
+      - ACQR
+      - ACQP
+      - CISS
+      - CISP
+      - CSCH
+      - SCHP
+    PassengerTransport2:
+      type: object
+      properties:
+        AncllryPurchs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AncillaryPurchase2'
+        HirdVhclDtls:
+          type: array
+          items:
+            $ref: '#/components/schemas/HiredVehicle2'
+        Summry:
+          $ref: '#/components/schemas/PassengerTransportSummary2'
+        TripLeg:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripLeg2'
+    PassengerTransportSummary2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        CstmrRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerReference1'
+        DocNb:
+          $ref: '#/components/schemas/Max35Text'
+        Dprture:
+          $ref: '#/components/schemas/DepartureOrArrival1'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        LltyPrgrmm:
+          $ref: '#/components/schemas/LoyaltyProgramme2'
+        OpnTcktInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Pssngr:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer8'
+        Rsvatn:
+          $ref: '#/components/schemas/ReservationDetails3'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        TcktIssr:
+          $ref: '#/components/schemas/Max35Text'
+        TrvlAuthstnCd:
+          $ref: '#/components/schemas/Max70Text'
+        TtlAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetails2'
+    PaymentTransaction141:
+      type: object
+      properties:
+        DscntTtl:
+          $ref: '#/components/schemas/FleetDiscountTotals1'
+        PurchsTp:
+          $ref: '#/components/schemas/FleetPurchaseType1Code'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        TaxTtl:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+    PercentageRate:
+      type: number
+    PeriodUnit2Code:
+      type: string
+      enum:
+      - HOUR
+      - HFDA
+      - DAYS
+      - WEEK
+      - MNTH
+      - YEAR
+      - MINU
+      - OTHR
+    PeriodUnit3Code:
+      type: string
+      enum:
+      - OTHP
+      - OTHN
+      - MNTH
+      - WEEK
+      - YEAR
+      - DAYS
+      - EXDY
+    PhoneNumber:
+      pattern: ^(\+[0-9]{1,3}-[0-9()+\-]{1,30})$
+      type: string
+    PlainCardData21:
+      type: object
+      properties:
+        AddtlCardData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        DrvrOrVhclId:
+          $ref: '#/components/schemas/Max20Text'
+    Plan2:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AmtDtls:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstalmentAmountDetails2'
+        DfrrdInstlmtInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        FrstAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        FrstPmtDt:
+          $ref: '#/components/schemas/ISODate'
+        GracePrd:
+          $ref: '#/components/schemas/GracePeriod2'
+        GrdTtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InstlmtCcy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        InstlmtPmtTp:
+          $ref: '#/components/schemas/Max35Text'
+        IntrstRate:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestRateDetails2'
+        NbOfPrds:
+          $ref: '#/components/schemas/Number'
+        NrmlPmtAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        OthrPlanOwnr:
+          $ref: '#/components/schemas/Max35Text'
+        PlanId:
+          $ref: '#/components/schemas/Max70Text'
+        PlanOwnr:
+          $ref: '#/components/schemas/PlanOwner1Code'
+        PrdUnit:
+          $ref: '#/components/schemas/Frequency18Code'
+        TtlNbOfPmts:
+          $ref: '#/components/schemas/Number'
+    PlanOwner1Code:
+      type: string
+      enum:
+      - ACCP
+      - ACQR
+      - ISSR
+      - OTHN
+      - OTHP
+    PointOfInteractionComponent13:
+      required:
+      - Id
+      - Tp
+      type: object
+      properties:
+        Assmnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointOfInteractionComponentIdentification3'
+        Chrtcs:
+          $ref: '#/components/schemas/PointOfInteractionComponentCharacteristics4'
+        Id:
+          $ref: '#/components/schemas/PointOfInteractionComponentIdentification3'
+        StdCmplc:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenericIdentification48'
+        Sts:
+          $ref: '#/components/schemas/PointOfInteractionComponentStatus3'
+        Tp:
+          $ref: '#/components/schemas/POIComponentType5Code'
+    PointOfInteractionComponentCharacteristics4:
+      type: object
+      properties:
+        Com:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommunicationCharacteristics3'
+        Mmry:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemoryCharacteristics1'
+        SbcbrIdntyMdls:
+          $ref: '#/components/schemas/Number'
+        SctyAccsMdls:
+          $ref: '#/components/schemas/Number'
+        SctyElmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/CryptographicKey13'
+    PointOfInteractionComponentIdentification3:
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        ItmNb:
+          $ref: '#/components/schemas/Max35Text'
+        PrvdrId:
+          $ref: '#/components/schemas/Max35Text'
+        SrlNb:
+          $ref: '#/components/schemas/Max70Text'
+    PointOfInteractionComponentStatus3:
+      type: object
+      properties:
+        Sts:
+          $ref: '#/components/schemas/POIComponentStatus1Code'
+        VrsnNb:
+          $ref: '#/components/schemas/Max256Text'
+        XpryDt:
+          $ref: '#/components/schemas/ISODate'
+    PointOfServiceContext3:
+      required:
+      - CardDataNtryMd
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AttnddInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CardDataNtryMd:
+          $ref: '#/components/schemas/CardDataReading10Code'
+        CardPres:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CrdhldrActvtd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CrdhldrPres:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DelydAuthstnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        EComrcData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ECommerceData1'
+        EComrcInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        MOTOCd:
+          $ref: '#/components/schemas/MOTO1Code'
+        OthrCardDataNtryMd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrQRCdPresntmntMd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrSctyChrtcs:
+          $ref: '#/components/schemas/Max35Text'
+        PrtlApprvlSpprtd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        QRCdPresntmntMd:
+          $ref: '#/components/schemas/QRCodePresentmentMode1Code'
+        SctyChrtcs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecurityCharacteristics1Code'
+        SpclConds:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialConditions1'
+        StorgLctn:
+          $ref: '#/components/schemas/Max35Text'
+        TempScrCardDataReusd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        TrnspndrInittd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        TrnstInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        UattnddLvlCtgy:
+          $ref: '#/components/schemas/Max35NumericText'
+    PointOfServiceContext4:
+      type: object
+      properties:
+        AttnddInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CardDataNtryMd:
+          $ref: '#/components/schemas/CardDataReading10Code'
+        CardPres:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CrdhldrActvtd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CrdhldrPres:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DelydAuthstnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        EComrcData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ECommerceData1'
+        EComrcInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        MOTOCd:
+          $ref: '#/components/schemas/MOTO1Code'
+        OthrCardDataNtryMd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrQRCdPresntmntMd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrSctyChrtcs:
+          $ref: '#/components/schemas/Max35Text'
+        PrtlApprvlSpprtd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        QRCdPresntmntMd:
+          $ref: '#/components/schemas/QRCodePresentmentMode1Code'
+        SctyChrtcs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecurityCharacteristics1Code'
+        SpclConds:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialConditions1'
+        StorgLctn:
+          $ref: '#/components/schemas/Max35Text'
+        TempScrCardDataReusd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        TrnspndrInittd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        TrnstInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        UattnddLvlCtgy:
+          $ref: '#/components/schemas/Max35NumericText'
+    PresentationMedium2Code:
+      type: string
+      enum:
+      - BIOM
+      - ELEC
+      - PAPR
+      - BOTH
+    Priority3Code:
+      type: string
+      enum:
+      - URGT
+      - HIGH
+      - NORM
+    ProcessingResult10:
+      required:
+      - RsltData
+      type: object
+      properties:
+        Actn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action13'
+        ActnReqrd:
+          $ref: '#/components/schemas/YesNoIndicator'
+        AddtlActn:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalAction1'
+        AddtlInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInformation29'
+        ApprvlCd:
+          $ref: '#/components/schemas/Exact6AlphaNumericText'
+        ErrDtl:
+          $ref: '#/components/schemas/ErrorDetails2'
+        OrgnlRsltData:
+          $ref: '#/components/schemas/ResultData7'
+        RsltData:
+          $ref: '#/components/schemas/ResultData7'
+        RspnSrc:
+          $ref: '#/components/schemas/ApprovalEntity2'
+    ProcessingResult16:
+      type: object
+      properties:
+        Actn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action13'
+        ActnReqrd:
+          $ref: '#/components/schemas/YesNoIndicator'
+        AddtlActn:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalAction1'
+        AddtlInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInformation29'
+        ApprvlCd:
+          $ref: '#/components/schemas/Exact6AlphaNumericText'
+        OrgnlRsltData:
+          $ref: '#/components/schemas/ResultData7'
+        RsltData:
+          $ref: '#/components/schemas/ResultData7'
+        RspnSrc:
+          $ref: '#/components/schemas/ApprovalEntity2'
+    Product7:
+      type: object
+      properties:
+        PdctCd:
+          $ref: '#/components/schemas/Max70Text'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+    ProductCodeType1Code:
+      type: string
+      enum:
+      - EA13
+      - EAN8
+      - GTIN
+      - OTHR
+      - PLUP
+      - RS14
+      - UPCA
+      - UPCE
+    ProtectedData1:
+      required:
+      - CnttTp
+      type: object
+      properties:
+        CnttTp:
+          $ref: '#/components/schemas/ContentType3Code'
+        EnvlpdData:
+          $ref: '#/components/schemas/EnvelopedData6'
+        NcrptdData:
+          $ref: '#/components/schemas/EncryptedData1'
+    ProtectionMethod1Code:
+      type: string
+      enum:
+      - OTHN
+      - OTHP
+      - SELM
+      - SNCL
+      - SOFT
+      - TEEN
+    PurchaseIdentifierType1Code:
+      type: string
+      enum:
+      - CONU
+      - CUOR
+      - CUPO
+      - FONU
+      - INNU
+      - ORNU
+      - OTHN
+      - OTHP
+      - PRNU
+      - PUID
+      - RELO
+      - REAG
+      - RENU
+      - RSNU
+      - SUOR
+      - TINU
+      - TRNU
+      - SUIN
+      - TNID
+    QRCodePresentmentMode1Code:
+      type: string
+      enum:
+      - CPMD
+      - OTHN
+      - OTHP
+      - MPMD
+    RateLock1:
+      type: object
+      properties:
+        ApldInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ElgblInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ReqdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    ReceiptType1Code:
+      type: string
+      enum:
+      - EMAL
+      - OTHR
+      - PAPR
+      - SMSM
+      - URID
+    Recipient5Choice:
+      type: object
+      properties:
+        IssrAndSrlNb:
+          $ref: '#/components/schemas/IssuerAndSerialNumber1'
+        KeyIdr:
+          $ref: '#/components/schemas/KEKIdentifier2'
+    Recipient6Choice:
+      type: object
+      properties:
+        KEK:
+          $ref: '#/components/schemas/KEK5'
+        KeyIdr:
+          $ref: '#/components/schemas/KEKIdentifier2'
+        KeyTrnsprt:
+          $ref: '#/components/schemas/KeyTransport5'
+    Recipient7Choice:
+      type: object
+      properties:
+        KEK:
+          $ref: '#/components/schemas/KEK6'
+        KeyIdr:
+          $ref: '#/components/schemas/KEKIdentifier6'
+        KeyTrnsprt:
+          $ref: '#/components/schemas/KeyTransport6'
+    Reconciliation3:
+      type: object
+      properties:
+        ChckptRef:
+          $ref: '#/components/schemas/Max35Text'
+        Dt:
+          $ref: '#/components/schemas/ISODate'
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+    RelativeDistinguishedName1:
+      required:
+      - AttrTp
+      - AttrVal
+      type: object
+      properties:
+        AttrTp:
+          $ref: '#/components/schemas/AttributeType1Code'
+        AttrVal:
+          $ref: '#/components/schemas/Max140Text'
+    RentalDetails2:
+      type: object
+      properties:
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+        RntlDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        RntlId:
+          $ref: '#/components/schemas/Max70Text'
+        RntlRtr:
+          $ref: '#/components/schemas/ServiceStartEnd2'
+        RntlStart:
+          $ref: '#/components/schemas/ServiceStartEnd2'
+        RntlTmPrd:
+          type: array
+          items:
+            $ref: '#/components/schemas/PeriodUnit2Code'
+        TmPrdRate:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TmPrdUnit:
+          $ref: '#/components/schemas/Max4NumericText'
+    RentalRate1:
+      type: object
+      properties:
+        OthrPrd:
+          $ref: '#/components/schemas/Max35Text'
+        Prd:
+          $ref: '#/components/schemas/PeriodUnit3Code'
+        PrdCnt:
+          $ref: '#/components/schemas/Max4NumericText'
+        Rate:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+    ReservationDetails3:
+      type: object
+      properties:
+        OrgnlRsvatnNb:
+          $ref: '#/components/schemas/Max35Text'
+        OrgnlSys:
+          $ref: '#/components/schemas/Max4Text'
+        RsvatnNb:
+          $ref: '#/components/schemas/Max35Text'
+        Sys:
+          $ref: '#/components/schemas/Max4Text'
+    Response8Code:
+      type: string
+      enum:
+      - PRCS
+      - UNPR
+      - UNRV
+      - REJT
+      - TECH
+      - OTHN
+      - OTHP
+    ResultData7:
+      required:
+      - RsltDtls
+      type: object
+      properties:
+        AddtlRsltInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        OthrRslt:
+          $ref: '#/components/schemas/Max35Text'
+        OthrRsltDtls:
+          $ref: '#/components/schemas/Max35Text'
+        Rslt:
+          $ref: '#/components/schemas/Response8Code'
+        RsltDtls:
+          $ref: '#/components/schemas/ISO8583ResponseCode'
+        TempScrCardDataReusePrtd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    RiskAssessment1Code:
+      type: string
+      enum:
+      - APPC
+      - APPH
+      - APPU
+      - DONT
+    RiskAssessment2:
+      type: object
+      properties:
+        AddtlRskData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalRiskData1'
+        HghRskTx:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrRcmmnddActn:
+          $ref: '#/components/schemas/Max35Text'
+        RcmmnddActn:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionType8Code'
+        RcmmnddActnDtls:
+          $ref: '#/components/schemas/Max256Text'
+        RskAssmntNtty:
+          $ref: '#/components/schemas/PartyIdentification200'
+        RskAssmntTp:
+          $ref: '#/components/schemas/Max35Text'
+        RskCond:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Rslt:
+          $ref: '#/components/schemas/Max35Text'
+        Rsn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max35Text'
+    RiskAssessmentDataEntityProvider1:
+      type: object
+      properties:
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/PartyType28Code'
+    RiskContext2:
+      type: object
+      properties:
+        RskAssmnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskAssessment2'
+        RskInptData:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskInputData1'
+    RiskInputData1:
+      required:
+      - Tp
+      - Val
+      type: object
+      properties:
+        Ntty:
+          $ref: '#/components/schemas/RiskAssessmentDataEntityProvider1'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max10KText'
+    Sale2:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/SaleItem3'
+        Summry:
+          $ref: '#/components/schemas/SaleSummary1'
+    SaleContext8:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        GoodAndSvcDlvryChanl:
+          $ref: '#/components/schemas/GoodAndServiceDeliveryChannel1Code'
+        GoodAndSvcDlvrySchdl:
+          $ref: '#/components/schemas/GoodAndServiceDeliverySchedule1Code'
+        GoodAndSvcsOthrSubTp:
+          $ref: '#/components/schemas/Max35Text'
+        GoodAndSvcsSubTp:
+          $ref: '#/components/schemas/GoodsAndServicesSubType1Code'
+        GoodsAndSvcsTp:
+          $ref: '#/components/schemas/GoodsAndServices1Code'
+        OthrGoodAndSvcDlvryChanl:
+          $ref: '#/components/schemas/Max35Text'
+        OthrGoodAndSvcDlvrySchdl:
+          $ref: '#/components/schemas/Max35Text'
+        RctDstn:
+          $ref: '#/components/schemas/Max70Text'
+        RctReqInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        RctTp:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptType1Code'
+        SaleId:
+          $ref: '#/components/schemas/Max35Text'
+        SaleRefId:
+          $ref: '#/components/schemas/Max35Text'
+        SaleRefNb:
+          $ref: '#/components/schemas/Max35Text'
+        SpltPmtInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+    SaleItem3:
+      type: object
+      properties:
+        AddtlPdctCd:
+          $ref: '#/components/schemas/Max70Text'
+        AddtlPdctCdTp:
+          $ref: '#/components/schemas/Max35Text'
+        AdjstdAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Adjstmnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adjustment10'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        NonAdjstdTtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        NonAdjstdUnitPric:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        OthrUnitOfMeasr:
+          $ref: '#/components/schemas/Max35Text'
+        PdctCd:
+          $ref: '#/components/schemas/Max70Text'
+        PdctCdModfr:
+          $ref: '#/components/schemas/DecimalNumber'
+        PdctCdTp:
+          $ref: '#/components/schemas/ProductCodeType1Code'
+        PdctDesc:
+          $ref: '#/components/schemas/Max140Text'
+        PdctQty:
+          $ref: '#/components/schemas/DecimalNumber'
+        PdctTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure1Code'
+    SaleSummary1:
+      type: object
+      properties:
+        Adjstmnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adjustment9'
+        LltyPrgrmm:
+          $ref: '#/components/schemas/LoyaltyProgramme2'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+    SecurityCharacteristics1Code:
+      type: string
+      enum:
+      - CETE
+      - CPTE
+      - CENC
+      - CMAC
+      - ETEE
+      - METE
+      - MPTE
+      - OPNN
+      - PMAC
+      - PKIE
+      - PRAE
+      - PRAM
+      - PRVN
+      - STAM
+      - APTE
+      - AETE
+      - OTHN
+      - OTHP
+    ServiceStartEnd2:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Ctct:
+          $ref: '#/components/schemas/Contact2'
+        DtAndTm:
+          $ref: '#/components/schemas/ISODateTime'
+        JrnyInf:
+          $ref: '#/components/schemas/JourneyInformation1'
+        Lctn:
+          $ref: '#/components/schemas/Max35Text'
+        LctnCd:
+          $ref: '#/components/schemas/Max35Text'
+        TmSgmt:
+          $ref: '#/components/schemas/TimeSegment1Code'
+    SettlementReportingEntity1:
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    SettlementService3:
+      type: object
+      properties:
+        AddtlSttlmInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        SttlmRptgNtty:
+          $ref: '#/components/schemas/SettlementReportingEntity1'
+        SttlmSvcApld:
+          $ref: '#/components/schemas/SettlementServiceMode1'
+        SttlmSvcDts:
+          $ref: '#/components/schemas/SettlementServiceDate2'
+        SttlmSvcPropsd:
+          $ref: '#/components/schemas/SettlementServiceMode1'
+    SettlementService4:
+      type: object
+      properties:
+        AddtlSttlmInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        SttlmRptgNtty:
+          $ref: '#/components/schemas/SettlementReportingEntity1'
+        SttlmSvcApld:
+          $ref: '#/components/schemas/SettlementServiceMode1'
+        SttlmSvcDts:
+          $ref: '#/components/schemas/SettlementServiceDate2'
+    SettlementServiceDate2:
+      type: object
+      properties:
+        DfrrdSttlmInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ReqdSttlmDt:
+          $ref: '#/components/schemas/ISODate'
+        SttlmCutOffTm:
+          $ref: '#/components/schemas/ISODateTime'
+        SttlmDt:
+          $ref: '#/components/schemas/ISODate'
+        SttlmPrd:
+          $ref: '#/components/schemas/Max35Text'
+        SttlmTm:
+          $ref: '#/components/schemas/ISOTime'
+    SettlementServiceMode1:
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+        SttlmPrty:
+          $ref: '#/components/schemas/Priority3Code'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    ShippingData2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        IncntivAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        InvcCreDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        InvcNb:
+          $ref: '#/components/schemas/Max70Text'
+        MiscExpnss:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        NbOfPackgs:
+          $ref: '#/components/schemas/Max6NumericText'
+        NetAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Packg:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingPackage2'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        SvcDscrptrCd:
+          $ref: '#/components/schemas/Max40Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    ShippingPackage2:
+      type: object
+      properties:
+        Dlvry:
+          $ref: '#/components/schemas/DeliveryInformation4'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        PckpDt:
+          $ref: '#/components/schemas/ISODate'
+        PckpTm:
+          $ref: '#/components/schemas/ISOTime'
+        Pdct:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product7'
+        Spplr:
+          $ref: '#/components/schemas/PartyIdentification260'
+        TrckgNb:
+          $ref: '#/components/schemas/Max70Text'
+        Wght:
+          $ref: '#/components/schemas/UnitOfMeasure2'
+    SignedData5:
+      type: object
+      properties:
+        Cert:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max5000Binary'
+        DgstAlgo:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlgorithmIdentification21'
+        NcpsltdCntt:
+          $ref: '#/components/schemas/EncapsulatedContent3'
+        Sgnr:
+          type: array
+          items:
+            $ref: '#/components/schemas/Signer4'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    Signer4:
+      required:
+      - DgstAlgo
+      - Sgntr
+      - SgntrAlgo
+      type: object
+      properties:
+        DgstAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification21'
+        SgndAttrbts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenericInformation1'
+        SgnrId:
+          $ref: '#/components/schemas/Recipient5Choice'
+        Sgntr:
+          $ref: '#/components/schemas/Max3000Binary'
+        SgntrAlgo:
+          $ref: '#/components/schemas/AlgorithmIdentification20'
+        Vrsn:
+          $ref: '#/components/schemas/Number'
+    SpecialConditions1:
+      type: object
+      properties:
+        Id:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max35Text'
+    SpecialProgrammeDetails1:
+      type: object
+      properties:
+        Nm:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/Max35Text'
+    SpecialProgrammeQualification1:
+      type: object
+      properties:
+        Dtl:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialProgrammeDetails1'
+        Prgrmm:
+          $ref: '#/components/schemas/Max35Text'
+    SponsoredMerchant2:
+      required:
+      - Id
+      type: object
+      properties:
+        AddtlAdrInf:
+          $ref: '#/components/schemas/Max256Text'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        CmonNm:
+          $ref: '#/components/schemas/Max140Text'
+        GeogcLctn:
+          $ref: '#/components/schemas/GeographicPointInDecimalDegrees'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification262'
+        LclData:
+          $ref: '#/components/schemas/LocalData5'
+        LglCorpNm:
+          $ref: '#/components/schemas/Max99Text'
+    StorageLocation1Code:
+      type: string
+      enum:
+      - CAWL
+      - DVCE
+      - ISWL
+      - ONFL
+      - OTHN
+      - OTHP
+      - TPWL
+    SupplementaryData1:
+      required:
+      - Envlp
+      type: object
+      properties:
+        Envlp:
+          $ref: '#/components/schemas/SupplementaryDataEnvelope1'
+        PlcAndNm:
+          $ref: '#/components/schemas/Max350Text'
+    SupplementaryDataEnvelope1:
+      type: object
+    Tax39:
+      required:
+      - Amt
+      - Tp
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        CdtDbt:
+          $ref: '#/components/schemas/CreditDebit3Code'
+        Desc:
+          $ref: '#/components/schemas/Max35Text'
+        InclInTtlInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Rate:
+          $ref: '#/components/schemas/PercentageRate'
+        TaxXmptRsn:
+          $ref: '#/components/schemas/Max35Text'
+        TaxXmptn:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Tp:
+          $ref: '#/components/schemas/AddendumTaxType2Code'
+    TaxReclaimMethod1Code:
+      type: string
+      enum:
+      - INPP
+      - INPS
+      - INSU
+      - OTHR
+    TelecomCallDetails2:
+      type: object
+      properties:
+        City:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        OthrTp:
+          $ref: '#/components/schemas/Max70Text'
+        PhneNb:
+          $ref: '#/components/schemas/PhoneNumber'
+        Prvc:
+          $ref: '#/components/schemas/Max35Text'
+        Stat:
+          $ref: '#/components/schemas/Max16Text'
+        Tp:
+          $ref: '#/components/schemas/TelephonyCallType1Code'
+    TelecomServices2:
+      type: object
+      properties:
+        LineItm:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelecomServicesLineItem2'
+        Summry:
+          $ref: '#/components/schemas/TelecomServicesSummary2'
+    TelecomServicesLineItem2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        CallFr:
+          $ref: '#/components/schemas/TelecomCallDetails2'
+        CallTo:
+          $ref: '#/components/schemas/TelecomCallDetails2'
+        Chrg:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount20'
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        Drtn:
+          $ref: '#/components/schemas/ISOTime'
+        StartDtTm:
+          $ref: '#/components/schemas/ISODate'
+        TmPrd:
+          $ref: '#/components/schemas/Max35Text'
+        TtlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        TtlTax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    TelecomServicesSummary2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        BllgEvt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount19'
+        BllgStmtPrdEnd:
+          $ref: '#/components/schemas/ISODate'
+        BllgStmtPrdStart:
+          $ref: '#/components/schemas/ISODate'
+        Cstmr:
+          $ref: '#/components/schemas/Customer6'
+        TtlTax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+    TelephonyCallType1Code:
+      type: string
+      enum:
+      - VCML
+      - TFPC
+      - PAGE
+      - OGPC
+      - OTHP
+      - OTHN
+      - OTCL
+      - ICPC
+    TemporaryServices2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        CtrctgCpny:
+          $ref: '#/components/schemas/TemporaryServicesCompany2'
+        DscntAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        FlatRateInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Job:
+          $ref: '#/components/schemas/TemporaryServicesJob1'
+        Labr:
+          $ref: '#/components/schemas/TemporaryServicesLabor1'
+        MiscExpnss:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount13'
+        SbttlAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TempMplyee:
+          $ref: '#/components/schemas/PartyIdentification210'
+    TemporaryServicesCharge1Code:
+      type: string
+      enum:
+      - WKND
+      - REGL
+      - OVRT
+      - OTHP
+      - OTHN
+      - ONCL
+      - NITE
+      - HOLI
+      - HAZD
+    TemporaryServicesCompany2:
+      type: object
+      properties:
+        Dept:
+          $ref: '#/components/schemas/Max70Text'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        Sprvsr:
+          $ref: '#/components/schemas/Max70Text'
+    TemporaryServicesJob1:
+      type: object
+      properties:
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        Drtn:
+          $ref: '#/components/schemas/Max5NumericText'
+        EndDt:
+          $ref: '#/components/schemas/ISODate'
+        JobCd:
+          $ref: '#/components/schemas/Max35Text'
+        StartDt:
+          $ref: '#/components/schemas/ISODate'
+    TemporaryServicesLabor1:
+      type: object
+      properties:
+        Chrg:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount12'
+        TmSheetNb:
+          $ref: '#/components/schemas/Max35Text'
+        WkEndg:
+          $ref: '#/components/schemas/Max10NumericText'
+    Terminal4:
+      required:
+      - TermnlId
+      type: object
+      properties:
+        Cpblties:
+          $ref: '#/components/schemas/Capabilities2'
+        GeogcLctn:
+          $ref: '#/components/schemas/GeographicPointInDecimalDegrees'
+        OffPrmissInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OnBrdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        OutdrInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        POICmpnt:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointOfInteractionComponent13'
+        TermnlId:
+          $ref: '#/components/schemas/TerminalIdentification3'
+        TermnlIntgtn:
+          $ref: '#/components/schemas/TerminalIntegrationCategory1Code'
+        Tp:
+          $ref: '#/components/schemas/TerminalType1Code'
+    Terminal6:
+      required:
+      - TermnlId
+      type: object
+      properties:
+        TermnlId:
+          $ref: '#/components/schemas/TerminalIdentification3'
+    TerminalIdentification3:
+      required:
+      - Id
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/Max35Text'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Id:
+          $ref: '#/components/schemas/Max16Text'
+        ShrtNm:
+          $ref: '#/components/schemas/Max35Text'
+    TerminalIntegrationCategory1Code:
+      type: string
+      enum:
+      - MPOI
+      - MSLE
+      - SSLE
+    TerminalType1Code:
+      type: string
+      enum:
+      - ATMT
+      - MPOS
+      - OTHN
+      - OTHP
+      - POST
+    Ticket2:
+      type: object
+      properties:
+        CnjnctnTcktNb:
+          $ref: '#/components/schemas/Max35Text'
+        OpnTcktInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        RcrdLctrNb:
+          $ref: '#/components/schemas/Max35Text'
+        RstrctdTcktInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Rstrctns:
+          $ref: '#/components/schemas/Max70Text'
+        Rsvatn:
+          $ref: '#/components/schemas/ReservationDetails3'
+        TcktIsseDt:
+          $ref: '#/components/schemas/ISODate'
+        TcktIsseLctn:
+          $ref: '#/components/schemas/Max140Text'
+        TcktIssr:
+          $ref: '#/components/schemas/PartyIdentification258'
+        TcktNb:
+          $ref: '#/components/schemas/Max35Text'
+        XchgdTcktInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        XchgdTcktNb:
+          $ref: '#/components/schemas/Max35Text'
+    TimeSegment1Code:
+      type: string
+      enum:
+      - AMBN
+      - PMAN
+    Token2:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        OthrPrtcnMtd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrStorgLctn:
+          $ref: '#/components/schemas/Max35Text'
+        PmtTkn:
+          $ref: '#/components/schemas/Max19NumericText'
+        PrtcnMtd:
+          $ref: '#/components/schemas/ProtectionMethod1Code'
+        StorgLctn:
+          $ref: '#/components/schemas/StorageLocation1Code'
+        TknAssrncData:
+          $ref: '#/components/schemas/Max140Text'
+        TknAssrncMtd:
+          $ref: '#/components/schemas/Max2NumericText'
+        TknInittdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        TknRqstrId:
+          $ref: '#/components/schemas/Max11NumericText'
+        TknXpryDt:
+          $ref: '#/components/schemas/ISOYearMonth'
+    Traceability9:
+      required:
+      - RlayId
+      type: object
+      properties:
+        RlayId:
+          $ref: '#/components/schemas/GenericIdentification183'
+        TracDtTmIn:
+          $ref: '#/components/schemas/ISODateTime'
+        TracDtTmOut:
+          $ref: '#/components/schemas/ISODateTime'
+    Track2Data1Choice:
+      type: object
+      properties:
+        HexBinryVal:
+          $ref: '#/components/schemas/Max19HexBinaryText'
+        TxtVal:
+          $ref: '#/components/schemas/Max37Text'
+    Transaction142:
+      required:
+      - TxAmts
+      - TxId
+      - TxTp
+      type: object
+      properties:
+        AcctFr:
+          $ref: '#/components/schemas/AccountDetails3'
+        AcctTo:
+          $ref: '#/components/schemas/AccountDetails3'
+        AddtlAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalAmounts3'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AddtlFee:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalFee2'
+        AddtlSvc:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalService2'
+        AltrnMsgRsn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max256Text'
+        AssoctdDataDstn:
+          $ref: '#/components/schemas/Max35Text'
+        AssoctdDataInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        AssoctdDataRef:
+          $ref: '#/components/schemas/Max70Text'
+        DpstDtls:
+          type: array
+          items:
+            $ref: '#/components/schemas/DepositDetails2'
+        DsptData:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeData3'
+        FndsSvcs:
+          $ref: '#/components/schemas/FundingService2'
+        MsgRsn:
+          type: array
+          items:
+            $ref: '#/components/schemas/ISO8583MessageReasonCode'
+        OrgnlAddtlFee:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalFee2'
+        OthrTxAttr:
+          $ref: '#/components/schemas/Max35Text'
+        PreAuthstnTmLmt:
+          $ref: '#/components/schemas/Max6NumericText'
+        SpclPrgrmmQlfctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialProgrammeQualification1'
+        TxAmts:
+          $ref: '#/components/schemas/TransactionAmounts2'
+        TxAttr:
+          $ref: '#/components/schemas/TransactionAttribute2Code'
+        TxDesc:
+          $ref: '#/components/schemas/Max1000Text'
+        TxId:
+          $ref: '#/components/schemas/TransactionIdentification51'
+        TxSubTp:
+          $ref: '#/components/schemas/Max35Text'
+        TxTp:
+          $ref: '#/components/schemas/ISO8583TransactionTypeCode'
+    Transaction150:
+      required:
+      - TxAmts
+      - TxId
+      - TxTp
+      type: object
+      properties:
+        AcctBal:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountBalance2'
+        AcctFr:
+          $ref: '#/components/schemas/AccountDetails3'
+        AcctTo:
+          $ref: '#/components/schemas/AccountDetails3'
+        AddtlAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalAmounts3'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AddtlFee:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalFee2'
+        AddtlSvc:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalService2'
+        AssoctdDataDstn:
+          $ref: '#/components/schemas/Max35Text'
+        OrgnlAddtlFee:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalFee2'
+        OthrTxAttr:
+          $ref: '#/components/schemas/Max35Text'
+        PreAuthstnTmLmt:
+          $ref: '#/components/schemas/Max6NumericText'
+        SpclPrgrmmQlfctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialProgrammeQualification1'
+        TxAmts:
+          $ref: '#/components/schemas/TransactionAmounts2'
+        TxAttr:
+          $ref: '#/components/schemas/TransactionAttribute2Code'
+        TxDesc:
+          $ref: '#/components/schemas/Max1000Text'
+        TxId:
+          $ref: '#/components/schemas/TransactionIdentification51'
+        TxSubTp:
+          $ref: '#/components/schemas/Max35Text'
+        TxTp:
+          $ref: '#/components/schemas/ISO8583TransactionTypeCode'
+    TransactionAmount1:
+      required:
+      - Amt
+      - Ccy
+      type: object
+      properties:
+        Amt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        Ccy:
+          $ref: '#/components/schemas/ISO3NumericCurrencyCode'
+    TransactionAmounts2:
+      required:
+      - TxAmt
+      type: object
+      properties:
+        AmtQlfr:
+          $ref: '#/components/schemas/TypeOfAmount22Code'
+        CrdhldrBllgAmt:
+          $ref: '#/components/schemas/Amount15'
+        DtldAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetailedAmount22'
+        OrgnlTxAmts:
+          $ref: '#/components/schemas/OriginalTransactionAmount2'
+        RcncltnAmt:
+          $ref: '#/components/schemas/Amount15'
+        TxAmt:
+          $ref: '#/components/schemas/TransactionAmount1'
+    TransactionAttribute2Code:
+      type: string
+      enum:
+      - AGGR
+      - CADB
+      - CPLT
+      - DBRC
+      - DBRP
+      - DFRD
+      - INCR
+      - FRCP
+      - INST
+      - OTHN
+      - OTHP
+      - PAUT
+      - PACP
+      - PPYT
+      - RCPT
+      - SUBR
+      - TPUP
+      - UCOF
+    TransactionContext7:
+      required:
+      - MrchntCtgyCd
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        AuthntcnOutgInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        CaptrDt:
+          $ref: '#/components/schemas/ISODate'
+        CardPrgrmm:
+          $ref: '#/components/schemas/CardProgramme2'
+        CstmrCnsnt:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DelydChrgsInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DfrrdDlvryInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        DtAntcptd:
+          $ref: '#/components/schemas/ISODate'
+        FnlAuthstnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ICCFllbckInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ICCFllbckRsnCd:
+          $ref: '#/components/schemas/ICCFallbackReason1Code'
+        Jursdctn:
+          $ref: '#/components/schemas/Jurisdiction2'
+        LatePresntmntInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        MgntcStrpFllbckInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        MrchntCtgyCd:
+          $ref: '#/components/schemas/ISO18245MerchantCategoryCode'
+        MrchntCtgySpcfcData:
+          $ref: '#/components/schemas/Max35Text'
+        NoShowInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        OthrICCFllbckRsnCd:
+          $ref: '#/components/schemas/Max35Text'
+        PINNtryBpssInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        PINPadInprtv:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        PrtlShipmntInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Rcncltn:
+          $ref: '#/components/schemas/Reconciliation3'
+        ReSubmissnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ReauthstnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SttlmSvc:
+          $ref: '#/components/schemas/SettlementService3'
+        TxInitr:
+          $ref: '#/components/schemas/TransactionInitiator1Code'
+        XchgRateInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExchangeRateInformation2'
+    TransactionContext8:
+      type: object
+      properties:
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        CardPrgrmmApld:
+          $ref: '#/components/schemas/CardProgrammeMode3'
+        DelydChrgsInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        FeeColltnInitr:
+          $ref: '#/components/schemas/FeeCollectionInitiator1Code'
+        Jursdctn:
+          $ref: '#/components/schemas/Jurisdiction2'
+        MrchntCtgyCd:
+          $ref: '#/components/schemas/ISO18245MerchantCategoryCode'
+        MrchntCtgySpcfcData:
+          $ref: '#/components/schemas/Max35Text'
+        NoShowInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        PrtlShipmntInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        Rcncltn:
+          $ref: '#/components/schemas/Reconciliation3'
+        ReSubmissnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ReauthstnInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SttlmSvc:
+          $ref: '#/components/schemas/SettlementService4'
+        TxInitr:
+          $ref: '#/components/schemas/TransactionInitiator1Code'
+    TransactionIdentification51:
+      required:
+      - RtrvlRefNb
+      - SysTracAudtNb
+      type: object
+      properties:
+        AcqrrRefData:
+          $ref: '#/components/schemas/Max140Text'
+        AcqrrRefNb:
+          $ref: '#/components/schemas/Max23NumericText'
+        CardIssrRefData:
+          $ref: '#/components/schemas/Max1000Text'
+        LclDt:
+          $ref: '#/components/schemas/ISODate'
+        LclTm:
+          $ref: '#/components/schemas/ISOTime'
+        LifeCyclSpprt:
+          $ref: '#/components/schemas/LifeCycleSupport1Code'
+        LifeCyclTracIdData:
+          $ref: '#/components/schemas/TransactionLifeCycleIdentification1'
+        LifeCyclTracIdMssng:
+          $ref: '#/components/schemas/Max70Text'
+        OrgnlDataElmts:
+          $ref: '#/components/schemas/OriginalDataElements2'
+        RtrvlRefNb:
+          $ref: '#/components/schemas/Exact12Text'
+        SysTracAudtNb:
+          $ref: '#/components/schemas/Max12NumericText'
+        TmZone:
+          $ref: '#/components/schemas/Max70Text'
+        TrnsmssnDtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        TxRef:
+          $ref: '#/components/schemas/Max35Text'
+    TransactionInitiator1Code:
+      type: string
+      enum:
+      - MERC
+      - CUST
+    TransactionLifeCycleIdentification1:
+      required:
+      - Id
+      type: object
+      properties:
+        AuthntcnTkn:
+          $ref: '#/components/schemas/Max35Text'
+        AuthstnSeqNb:
+          $ref: '#/components/schemas/Exact2NumericText'
+        Id:
+          $ref: '#/components/schemas/Exact15Text'
+        PresntmntSeqCnt:
+          $ref: '#/components/schemas/Exact2NumericText'
+        PresntmntSeqNb:
+          $ref: '#/components/schemas/Exact2NumericText'
+    TransferService2:
+      type: object
+      properties:
+        BizPurp:
+          $ref: '#/components/schemas/Max500Text'
+        Desc:
+          $ref: '#/components/schemas/Max256Text'
+        Ref:
+          $ref: '#/components/schemas/Max35Text'
+        SvcNm:
+          $ref: '#/components/schemas/Max35Text'
+        SvcPrvdr:
+          $ref: '#/components/schemas/Max35Text'
+    TransportType1Code:
+      type: string
+      enum:
+      - AIRR
+      - BUSS
+      - OTHN
+      - OTHP
+      - RAIL
+      - SHIP
+    TravelAgency3:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Cpny:
+          $ref: '#/components/schemas/PartyIdentification261'
+        TrvlPackg:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelAgencyPackage1'
+    TravelAgencyPackage1:
+      type: object
+      properties:
+        CdtCardSlipNb:
+          $ref: '#/components/schemas/Max35Text'
+        CstmrRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerReference1'
+        DataSrc:
+          $ref: '#/components/schemas/Max35Text'
+        DlvryOrdrNb:
+          $ref: '#/components/schemas/Max35Text'
+        Fee:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncAmt:
+          $ref: '#/components/schemas/ImpliedCurrencyAndAmount'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        NbInPty:
+          $ref: '#/components/schemas/Max10NumericText'
+        RsvatnNb:
+          $ref: '#/components/schemas/Max35Text'
+        TrvlPackgTp:
+          $ref: '#/components/schemas/Max70Text'
+    TravelDocument2:
+      required:
+      - Id
+      - Tp
+      type: object
+      properties:
+        Assgnr:
+          $ref: '#/components/schemas/Max70Text'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Form:
+          $ref: '#/components/schemas/PresentationMedium2Code'
+        Id:
+          $ref: '#/components/schemas/Max70Text'
+        IssncDt:
+          $ref: '#/components/schemas/ISODate'
+        Tp:
+          $ref: '#/components/schemas/OfficialDocumentType1Code'
+        XprtnDt:
+          $ref: '#/components/schemas/ISODate'
+    TripInformation1:
+      type: object
+      properties:
+        BllgId:
+          $ref: '#/components/schemas/Max70Text'
+        CtrlNb:
+          $ref: '#/components/schemas/Max35Text'
+        DlvryTcktNb:
+          $ref: '#/components/schemas/Max35Text'
+        InvcNb:
+          $ref: '#/components/schemas/Max70Text'
+        JobNb:
+          $ref: '#/components/schemas/Max10Text'
+        TripNb:
+          $ref: '#/components/schemas/Max35Text'
+        WorkOrdr:
+          $ref: '#/components/schemas/Max70Text'
+    TripLeg2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Arrvl:
+          $ref: '#/components/schemas/DepartureOrArrival1'
+        CdtRsnCd:
+          $ref: '#/components/schemas/Max35Text'
+        CmmdtyCd:
+          $ref: '#/components/schemas/Max4Text'
+        Crrier:
+          $ref: '#/components/schemas/CarrierIdentification1'
+        Doc:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentReference1'
+        Dprture:
+          $ref: '#/components/schemas/DepartureOrArrival1'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        FairBsisCd:
+          $ref: '#/components/schemas/Max35Text'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        LltyPrgrmm:
+          $ref: '#/components/schemas/LoyaltyProgramme2'
+        NonDrctRouteCd:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTrnsprtTp:
+          $ref: '#/components/schemas/Max35Text'
+        PrcdrId:
+          $ref: '#/components/schemas/Max35Text'
+        PrcdrRef:
+          $ref: '#/components/schemas/Max35Text'
+        RouteNb:
+          $ref: '#/components/schemas/Max35Text'
+        SeqNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        StopOverInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SvcClss:
+          $ref: '#/components/schemas/Max35Text'
+        Tckt:
+          $ref: '#/components/schemas/Ticket2'
+        TripLegAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetails2'
+        TrnsprtTp:
+          $ref: '#/components/schemas/TransportType1Code'
+    TrueFalseIndicator:
+      type: boolean
+    TypeOfAmount19Code:
+      type: string
+      enum:
+      - CONN
+      - INSU
+      - LNDS
+      - MISC
+      - OTHN
+      - OTHP
+      - USGE
+    TypeOfAmount20Code:
+      type: string
+      enum:
+      - AMTH
+      - BAGG
+      - CARG
+      - CHTC
+      - CLUB
+      - DUTY
+      - EXTK
+      - EXTF
+      - EXTR
+      - FARE
+      - FDBV
+      - INSU
+      - MISC
+      - OTHN
+      - OTHP
+      - PETC
+      - PHNE
+      - PRPY
+      - TOTL
+      - TOUR
+      - UPGD
+      - TKDL
+    TypeOfAmount21Code:
+      type: string
+      enum:
+      - INTC
+      - FEEP
+      - OTHN
+      - OTHP
+      - FEEA
+      - CSIF
+      - MXIF
+      - MNIF
+    TypeOfAmount22Code:
+      type: string
+      enum:
+      - ACTL
+      - DFLT
+      - DPST
+      - ESTM
+      - MAXI
+      - PRXY
+      - RESD
+    UnitOfMeasure10Code:
+      type: string
+      enum:
+      - KMET
+      - MILE
+    UnitOfMeasure1Code:
+      type: string
+      enum:
+      - PIEC
+      - TONS
+      - FOOT
+      - GBGA
+      - USGA
+      - GRAM
+      - INCH
+      - KILO
+      - PUND
+      - METR
+      - CMET
+      - MMET
+      - LITR
+      - CELI
+      - MILI
+      - GBOU
+      - USOU
+      - GBQA
+      - USQA
+      - GBPI
+      - USPI
+      - MILE
+      - KMET
+      - YARD
+      - SQKI
+      - HECT
+      - ARES
+      - SMET
+      - SCMT
+      - SMIL
+      - SQMI
+      - SQYA
+      - SQFO
+      - SQIN
+      - ACRE
+    UnitOfMeasure2:
+      type: object
+      properties:
+        NbOfUnits:
+          $ref: '#/components/schemas/DecimalNumber'
+        OthrUnitOfMeasr:
+          $ref: '#/components/schemas/Max35Text'
+        UnitOfMeasr:
+          $ref: '#/components/schemas/UnitOfMeasure1Code'
+    UserInterface1Code:
+      type: string
+      enum:
+      - CDSP
+      - CRCP
+      - MDSP
+      - MRCP
+    UserInterface6Code:
+      type: string
+      enum:
+      - CDSP
+      - CRCP
+      - MDSP
+      - MRCP
+      - CRDO
+      - FILE
+      - CHAP
+      - MRAP
+      - MRIN
+    Vehicle2:
+      required:
+      - Data
+      type: object
+      properties:
+        Data:
+          $ref: '#/components/schemas/Max35Text'
+        NtryMd:
+          $ref: '#/components/schemas/CardDataReading5Code'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    Vehicle4:
+      type: object
+      properties:
+        Clss:
+          $ref: '#/components/schemas/Max35Text'
+        Make:
+          $ref: '#/components/schemas/Max35NumericText'
+        Mdl:
+          $ref: '#/components/schemas/Max35NumericText'
+        RegnNb:
+          $ref: '#/components/schemas/Max35Text'
+    Vehicle5:
+      type: object
+      properties:
+        AddtlVhclData:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle2'
+        FleetNb:
+          $ref: '#/components/schemas/Max10Text'
+        Hbmtr:
+          $ref: '#/components/schemas/DecimalNumber'
+        MntncId:
+          $ref: '#/components/schemas/Max35Text'
+        Odmtr:
+          $ref: '#/components/schemas/DecimalNumber'
+        OnBrdDgnstcs:
+          $ref: '#/components/schemas/OnBoardDiagnostics1'
+        RplcmntVhclInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        SubFleetNb:
+          $ref: '#/components/schemas/Max35Text'
+        TrlrNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        UnitNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        VhclIdNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        VhclNb:
+          $ref: '#/components/schemas/Max35NumericText'
+        VhclTag:
+          $ref: '#/components/schemas/Max35Text'
+        VhclTagNtryMd:
+          $ref: '#/components/schemas/CardDataReading5Code'
+    VehicleRentalAgreement2:
+      type: object
+      properties:
+        AddtlAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount18'
+        AdjstdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        AgrmtNb:
+          $ref: '#/components/schemas/Max35Text'
+        ChckInDt:
+          $ref: '#/components/schemas/ISODate'
+        ChckInTm:
+          $ref: '#/components/schemas/ISOTime'
+        ChckOutDt:
+          $ref: '#/components/schemas/ISODate'
+        ChckOutTm:
+          $ref: '#/components/schemas/ISOTime'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        DscntPrgrmm:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount3'
+        EstmtdTax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        LltyPrgrmm:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoyaltyProgramme3'
+        PckpLctn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address2'
+        RntlDtls:
+          $ref: '#/components/schemas/RentalDetails2'
+        RntlLctn:
+          $ref: '#/components/schemas/Address2'
+        RntlRate:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentalRate1'
+        RtrLctn:
+          $ref: '#/components/schemas/Address2'
+        TrvlDstnc:
+          $ref: '#/components/schemas/Distance1'
+        VhclClssDtls:
+          $ref: '#/components/schemas/Vehicle4'
+        VhclRegnNb:
+          $ref: '#/components/schemas/Max70Text'
+    VehicleRentalCompany2:
+      type: object
+      properties:
+        Adr:
+          $ref: '#/components/schemas/Address2'
+        Ctct:
+          $ref: '#/components/schemas/Contact3'
+        Ctry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        Id:
+          $ref: '#/components/schemas/PartyIdentification258'
+        Nm:
+          $ref: '#/components/schemas/Max70Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/CarRentalActivity1Code'
+    VehicleRentalCustomer2:
+      required:
+      - CorpIdr
+      - RntrNm
+      type: object
+      properties:
+        AddtlDrvr:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriverInParty2'
+        Assgnr:
+          $ref: '#/components/schemas/CustomerAssigner1Code'
+        CorpIdr:
+          $ref: '#/components/schemas/Max35Text'
+        CorpNm:
+          $ref: '#/components/schemas/Max70Text'
+        LltyPrgrmm:
+          $ref: '#/components/schemas/LoyaltyProgramme2'
+        PmryDrvr:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriverInParty2'
+        RntrNm:
+          $ref: '#/components/schemas/Max70Text'
+    VehicleRentalInvoice2:
+      type: object
+      properties:
+        AddtlAmt:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount18'
+        AdjstdInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        ChckInDt:
+          $ref: '#/components/schemas/ISODate'
+        ChckInTm:
+          $ref: '#/components/schemas/ISOTime'
+        ChckOutDt:
+          $ref: '#/components/schemas/ISODate'
+        ChckOutTm:
+          $ref: '#/components/schemas/ISOTime'
+        Drtn:
+          $ref: '#/components/schemas/Max4NumericText'
+        InsrncInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        NoShowInd:
+          $ref: '#/components/schemas/TrueFalseIndicator'
+        RntlChrg:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentalRate1'
+        RtrLctn:
+          $ref: '#/components/schemas/Address2'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        Tax:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax39'
+        TrvlDstnc:
+          $ref: '#/components/schemas/Distance1'
+        VhclClssInvcd:
+          $ref: '#/components/schemas/Vehicle4'
+        VhclClssPrvdd:
+          $ref: '#/components/schemas/Vehicle4'
+    VehicleRentalService2:
+      type: object
+      properties:
+        AddtlData:
+          $ref: '#/components/schemas/Max350Text'
+        Cstmr:
+          $ref: '#/components/schemas/VehicleRentalCustomer2'
+        RntlAgrmt:
+          $ref: '#/components/schemas/VehicleRentalAgreement2'
+        RntlInvc:
+          $ref: '#/components/schemas/VehicleRentalInvoice2'
+        SummryCmmdtyId:
+          $ref: '#/components/schemas/Max35Text'
+        VhclRntlCpny:
+          $ref: '#/components/schemas/VehicleRentalCompany2'
+    Verification3Code:
+      type: string
+      enum:
+      - FAIL
+      - FUTA
+      - MISS
+      - NOSP
+      - NOVF
+      - OTHN
+      - OTHP
+      - PART
+      - SUCC
+      - ERRR
+    Verification4:
+      type: object
+      properties:
+        AddtlInf:
+          $ref: '#/components/schemas/Max35Text'
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        SubTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/ExternalAuthenticationMethod1Code'
+        VrfctnRslt:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationResult2'
+    Verification5:
+      type: object
+      properties:
+        OthrTp:
+          $ref: '#/components/schemas/Max35Text'
+        SubTp:
+          $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/ExternalAuthenticationMethod1Code'
+        VrfctnInf:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationInformation1'
+        VrfctnRslt:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationResult2'
+    VerificationEntity2Code:
+      type: string
+      enum:
+      - MERC
+      - ACQR
+      - AGNT
+      - ISSR
+      - OTHN
+      - OTHP
+      - CDAD
+      - ICCA
+    VerificationInformation1:
+      type: object
+      properties:
+        DtTm:
+          $ref: '#/components/schemas/ISODateTime'
+        Rsn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Max35Text'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+        Val:
+          $ref: '#/components/schemas/VerificationValue1Choice'
+        VldtyEndDt:
+          $ref: '#/components/schemas/ISODate'
+        VldtyEndTm:
+          $ref: '#/components/schemas/ISOTime'
+    VerificationResult2:
+      type: object
+      properties:
+        Ntty:
+          $ref: '#/components/schemas/VerificationEntity2Code'
+        OthrNtty:
+          $ref: '#/components/schemas/Max35Text'
+        OthrRslt:
+          $ref: '#/components/schemas/Max500Text'
+        Rslt:
+          $ref: '#/components/schemas/Verification3Code'
+        RsltDtls:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        Tp:
+          $ref: '#/components/schemas/Max35Text'
+    VerificationValue1Choice:
+      type: object
+      properties:
+        BinryVal:
+          $ref: '#/components/schemas/Max5000Binary'
+        HexBinryVal:
+          $ref: '#/components/schemas/Max9999HexBinaryText'
+        PINData:
+          $ref: '#/components/schemas/PINData1'
+        TxtVal:
+          $ref: '#/components/schemas/Max2048Text'
+    Wallet2:
+      type: object
+      properties:
+        Actvty:
+          $ref: '#/components/schemas/Max10PositiveNumber'
+        ActvtyIntrvl:
+          $ref: '#/components/schemas/Frequency12Code'
+        AddtlData:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalData1'
+        CardDataNtryMd:
+          $ref: '#/components/schemas/CardDataReading9Code'
+        DaysSncLastActvty:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        LastWlltChng:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        OthrCardDataNtryMd:
+          $ref: '#/components/schemas/Max35Text'
+        PANAge:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        Prvdr:
+          $ref: '#/components/schemas/PartyIdentification258'
+        SspdCrds:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        UsrAcctAge:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltAcctAge:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltAcctCtry:
+          $ref: '#/components/schemas/ISOMax3ACountryCode'
+        WlltAcctEmailAge:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltPrvdrAcctScore:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltPrvdrDvcScore:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltPrvdrPhneScore:
+          $ref: '#/components/schemas/Max5PositiveNumber'
+        WlltPrvdrRskAssmnt:
+          $ref: '#/components/schemas/RiskAssessment1Code'
+        WlltPrvdrRskAssmntMdlVrsn:
+          $ref: '#/components/schemas/Max35Text'
+    YesNoIndicator:
+      type: boolean
+  securitySchemes:
+    OauthSecurity:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.example.com/oauth/token
+          scopes:
+            api.example.AuthorisationInitiation.Acquirer to Issuer Card Messages: Acquirer
+              to Issuer Card Messages Online Message AuthorisationInitiation access
+              scope

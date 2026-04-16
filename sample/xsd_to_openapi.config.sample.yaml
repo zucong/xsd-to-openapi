@@ -1,0 +1,23 @@
+# xsd_to_openapi.config.yaml
+# Batch configuration for xsd_to_openapi.py
+# Usage: python xsd_to_openapi.py --config xsd_to_openapi.config.yaml
+
+defaults:
+  message_set_name: Acquirer to Issuer Card Messages       # message set name (used as API tag & OAuth scope)
+  output_dir: ./output           # output directory when output_path is not specified per job
+  # server_url: https://api.example.com/v1          # API server base URL in the OpenAPI spec
+  # token_url:  https://api.example.com/oauth/token # OAuth2 token endpoint
+
+
+jobs:
+  - message_name: AuthorisationInitiation
+    request_xsd: cain.001.001.03.xsd
+    response_xsd: cain.002.001.03.xsd
+    # output_path not set → will write to ./output/AuthorisationInitiation.yaml
+
+  # Example: override output path and message_set_name for a specific job
+  # - message_name: AcceptorCompeletionAdvice
+  #   request_xsd: caaa.003.001.11.xsd
+  #   response_xsd: caaa.004.001.10.xsd
+  #   output_path: ./output/CancellationAdvice.yaml
+  #   message_set_name: "Card Payments Exchange - Acceptor to Acquirer"
